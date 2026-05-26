@@ -1,0 +1,13 @@
+Package: ARID
+Title: Atacama Repository of Isotopic Data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Diego", "Mayorga", , "mayorgarmijo@gmail.com", role = c("aut", "cre"))
+Description: An open, collaborative repository of isotopic data for the
+    Atacama Desert of northern Chile. Provides tools to access, filter,
+    and visualize stable isotope data integrated with contextual,
+    geographical, chronological, and bibliographic variables.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
