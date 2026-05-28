@@ -20,7 +20,13 @@ ARID includes four datasets:
 | `arid_plants` | Isotopic data from botanical remains | 576 |
 | `arid_sites` | Archaeological site information with geographic and chronological context | 203 |
 
-All datasets cover the full chronological sequence of northern Chile. Samples are georeferenced and classified by ecozone (Littoral, Transversal valley, Interior Desert, Altiplano, and others) and administrative region.
+## Geographic coverage
+
+ARID currently includes samples from 203 archaeological sites across three 
+administrative regions of northern Chile. The maps below show the spatial 
+distribution and sample density across the study area.
+
+![](man/figures/map_overview.png)
 
 ### Key isotopic variables
 
