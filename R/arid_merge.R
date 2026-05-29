@@ -29,13 +29,11 @@ arid_merge <- function(tables = c("humans", "animals", "plants"), long = FALSE) 
   valid <- c("humans", "animals", "plants")
   tables <- match.arg(tables, valid, several.ok = TRUE)
 
-  # Columnas de sitio a agregar (excluye las que ya están en las tablas de muestras)
+  # Columnas de sitio a agregar
   site_cols <- c(
     "site_name", "locality", "admin_region", "ecozone",
-    "biome_1", "lat", "lon", "altitude_masl",
-    "exact_coordinates", "site_radius_km",
-    "site_type", "site_description", "site_function",
-    "archaeological_culture", "period", "period_from", "period_to"
+    "lat", "lon", "altitude_masl",
+    "period", "period_from", "period_to"
   )
   sites_sub <- arid_sites[, intersect(site_cols, colnames(arid_sites))]
 
@@ -52,35 +50,34 @@ arid_merge <- function(tables = c("humans", "animals", "plants"), long = FALSE) 
 
   combined <- dplyr::bind_rows(frames)
 
-  # Join con arid_sites
-  # Evitar duplicar columnas que ya existen en la tabla de muestras
+  # Join con arid_sites — evitar duplicar columnas ya existentes
   site_add <- setdiff(colnames(sites_sub), colnames(combined))
   sites_join <- sites_sub[, c("site_name", site_add), drop = FALSE]
   result <- merge(combined, sites_join, by = "site_name", all.x = TRUE)
 
-  # Formato long (solo para humans y animals, que tienen dos bloques de tejido)
+  # Formato long (una fila por bloque de tejido)
   if (long) {
-    iso_collagen  <- c("tissue_collagen", "element_collagen", "tissue_age_collagen",
+    iso_organic   <- c("tissue", "element", "tissue_age",
                        "yield_pct", "wt_C", "wt_N", "CN_ratio",
-                       "d13C_collagen", "d15N", "wt_S", "d34S")
+                       "d13C", "d15N", "wt_S", "d34S")
     iso_carbonate <- c("tissue_carbonate", "element_carbonate", "tissue_age_carbonate",
                        "d13C_carbonate", "d18O_carbonate")
 
-    cols_collagen  <- intersect(iso_collagen,  colnames(result))
+    cols_organic   <- intersect(iso_organic,   colnames(result))
     cols_carbonate <- intersect(iso_carbonate, colnames(result))
 
-    if (length(cols_collagen) > 0 && length(cols_carbonate) > 0) {
-      base_cols <- setdiff(colnames(result), c(cols_collagen, cols_carbonate))
+    if (length(cols_organic) > 0 && length(cols_carbonate) > 0) {
+      base_cols <- setdiff(colnames(result), c(cols_organic, cols_carbonate))
 
-      df_collagen <- result[, c(base_cols, cols_collagen)]
-      df_collagen$tissue_block <- "collagen"
-      names(df_collagen) <- gsub("_collagen$", "", names(df_collagen))
+      df_organic <- result[, c(base_cols, cols_organic)]
+      df_organic$tissue_block <- "organic"
+      names(df_organic) <- gsub("_carbonate$", "", names(df_organic))
 
       df_carbonate <- result[, c(base_cols, cols_carbonate)]
       df_carbonate$tissue_block <- "carbonate"
       names(df_carbonate) <- gsub("_carbonate$", "", names(df_carbonate))
 
-      result <- dplyr::bind_rows(df_collagen, df_carbonate)
+      result <- dplyr::bind_rows(df_organic, df_carbonate)
       result <- result[!is.na(result$tissue_block), ]
     }
   }

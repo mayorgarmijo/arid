@@ -20,25 +20,32 @@ ARID includes four datasets:
 | `arid_plants` | Isotopic data from botanical remains | 576 |
 | `arid_sites` | Archaeological site information with geographic and chronological context | 203 |
 
-## Geographic coverage
-
-ARID currently includes samples from 203 archaeological sites across three 
-administrative regions of northern Chile. The maps below show the spatial 
-distribution and sample density across the study area.
-
-![](man/figures/map_overview.png)
+All datasets cover the full chronological sequence of northern Chile.
 
 ### Key isotopic variables
 
 | Variable | Description |
 |---|---|
-| `d13C_collagen` | δ¹³C from collagen or soft tissue (‰ VPDB) |
-| `d15N` | δ¹⁵N from collagen or soft tissue (‰ AIR) |
+| `d13C` | δ¹³C from organic tissue (collagen, keratin, or soft tissue) (‰ VPDB) |
+| `d15N` | δ¹⁵N from organic tissue (‰ AIR) |
 | `d34S` | δ³⁴S (‰ VCDT) |
 | `d13C_carbonate` | δ¹³C from bone/enamel apatite (‰ VPDB) |
 | `d18O_carbonate` | δ¹⁸O from bone/enamel apatite (‰ VPDB) |
 | `Sr87_Sr86` | ⁸⁷Sr/⁸⁶Sr ratio |
 | `wt_C`, `wt_N`, `CN_ratio` | Collagen quality indicators |
+| `tissue` | Tissue type for organic isotope measurements (e.g. Bone collagen, Hair keratin) |
+
+## Geographic coverage
+
+ARID currently includes samples from 203 archaeological sites across three administrative regions of northern Chile. The maps below show the spatial distribution and sample density across the study area.
+
+![](man/figures/map_overview.png)
+
+Samples are classified by:
+
+- **`admin_region`**: Arica y Parinacota · Tarapacá · Antofagasta
+- **`ecozone`**: Coast (< 130 masl) · Lowlands (130–1700 masl) · Precordillera (1700–3700 masl) · Altiplano (> 3700 masl)
+- **`locality`**: Specific site locality (e.g. Lower Azapa Valley, Loa basin, San Pedro de Atacama Oasis)
 
 ## Usage
 
@@ -58,11 +65,15 @@ all_samples <- arid_merge()
 # Filter by ecozone
 library(dplyr)
 coastal <- arid_merge("humans") |>
-  filter(ecozone == "Littoral")
+  filter(ecozone == "Coast")
 
 # Filter by administrative region
 antofagasta <- arid_merge("humans") |>
   filter(admin_region == "Antofagasta")
+
+# Filter by tissue type
+collagen_only <- arid_merge("humans") |>
+  filter(grepl("collagen", tissue, ignore.case = TRUE))
 
 # Long format for tissue-level analysis
 humans_long <- arid_merge("humans", long = TRUE)
@@ -82,29 +93,19 @@ arid_merge("plants")
 arid_merge(c("humans", "animals"))
 arid_merge()  # all three tables
 
-# Long format — one row per tissue type
+# Long format — one row per tissue block (organic / carbonate)
 arid_merge("humans", long = TRUE)
 ```
 
-## Geographic coverage
-
-Samples are classified by:
-
-- **`admin_region`**: Arica y Parinacota · Tarapacá · Antofagasta
-- **`ecozone`**: Littoral · Transversal valley · Interior Desert · Middle depression · Cordillera de la costa · Altiplano
-- **`locality`**: Specific site locality (e.g. Lower Azapa Valley, Loa basin, San Pedro de Atacama Oasis)
-
 ## Data sources
 
-ARID compiles data from peer-reviewed publications. Each record includes a short citation (`reference_short`) and a DOI (`doi`) linking to the original source. The full list of references is available in the original dataset.
+ARID compiles data from peer-reviewed publications. Each record includes a short citation (`reference_short`) and a DOI (`doi`) linking to the original source.
 
 This repository is derived from the South American Archaeological Isotopic Database (SAAID), filtered to the Atacama Desert region of northern Chile.
 
 ## Contributing
 
 Contributions are welcome. To add new data or correct existing records, please open an issue or submit a pull request on [GitHub](https://github.com/mayorgarmijo/arid).
-
-Data corrections for site-level information (e.g. ecozone assignments) can be submitted by editing `corrections/site_corrections.csv`.
 
 ## License
 

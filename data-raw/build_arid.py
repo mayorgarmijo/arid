@@ -10,7 +10,6 @@ Outputs:
     arid_animals.csv
     arid_plants.csv
     arid_sites.csv
-    ../corrections/site_corrections.csv  (solo si no existe; si existe lo respeta)
 """
 
 import argparse
@@ -20,18 +19,18 @@ from pathlib import Path
 # ── Filtro geográfico ─────────────────────────────────────────────────────────
 TARGET_REGIONS = ["North Coast of Chile", "Northern Chile"]
 
-# ── Normalización de Biome_2 → ecozone ───────────────────────────────────────
-BIOME2_MAP = {
-    "Atacama Desert":                    "Transversal valley",
-    "Atacama Desert-Altiplano":          "Altiplano",
-    "Atacama Desert-Cordillera de la costa": "Cordillera de la costa",
-    "Atacama Desert-Inland":             "Transversal valley",
-    "Atacama Desert-Interior Desert":    "Interior Desert",
-    "Atacama Desert-Littoral":           "Littoral",
-    "Atacama Desert-Middle depression":  "Middle depression",
-    "Atacama Desert-Precordillera":      "Altiplano",
-    "Atacama Desert-Transversal valley": "Transversal valley",
-}
+# ── Ecozona desde altitud ─────────────────────────────────────────────────────
+def assign_ecozone(alt):
+    if pd.isna(alt):
+        return None
+    elif alt < 130:
+        return "Coast"
+    elif alt < 1700:
+        return "Lowlands"
+    elif alt < 3700:
+        return "Precordillera"
+    else:
+        return "Altiplano"
 
 # ── Normalización de región administrativa ────────────────────────────────────
 ADMIN_MAP = {
@@ -45,7 +44,6 @@ ADMIN_MAP = {
     "Atacama Region":              "Atacama",
 }
 
-# Casos especiales sin región al final del string
 SPECIAL_LOCALITY = {
     "From Laguna Lejía (~4500 masl) to the eastern margin of the Salar de Atacama, near Talabre (2700 masl)":
         ("Laguna Lejía to Salar de Atacama", "Antofagasta"),
@@ -60,8 +58,8 @@ DROP_ALWAYS = [
     "δ18O standard", "δ18Ophosphate",
     "206Pb/204Pb", "207Pb/204Pb", "208Pb/204Pb",
     "Compilation_Reference", "Compilation_Full_Reference",
-    # Columnas eliminadas por decisión de diseño ARID
     "Biome_1", "Biome 1",
+    "Biome_2", "Biome 2",
     "Region",
     "Exact_coordinates?",
     "Site_location_radius (km)", "Site location_radius (km)",
@@ -102,9 +100,9 @@ RENAME = {
     "Calibrated/modelled 14C (95%)_to": "c14_cal_to",
     "Material_dated": "material_dated",
     "Sample_type": "sample_type",
-    "Tissue": "tissue_collagen",
-    "Element": "element_collagen",
-    "Tissue_age": "tissue_age_collagen",
+    "Tissue": "tissue",
+    "Element": "element",
+    "Tissue_age": "tissue_age",
     "Tissue.1": "tissue_carbonate",
     "Element.1": "element_carbonate",
     "Tissue_age.1": "tissue_age_carbonate",
@@ -112,15 +110,15 @@ RENAME = {
     "Age_category": "age_category",
     "Min_age": "age_min",
     "Max_age": "age_max",
-    "Min_age.1": "tissue_age_collagen_min",
-    "Max_age.1": "tissue_age_collagen_max",
+    "Min_age.1": "tissue_age_min",
+    "Max_age.1": "tissue_age_max",
     "Min_age.2": "tissue_age_carbonate_min",
     "Max_age.2": "tissue_age_carbonate_max",
     "%Yield": "yield_pct",
     "wt%C": "wt_C",
     "wt%N": "wt_N",
     "C:N": "CN_ratio",
-    "δ13C": "d13C_collagen",
+    "δ13C": "d13C",
     "δ15N": "d15N",
     "wt%S": "wt_S",
     "δ34S": "d34S",
@@ -169,23 +167,27 @@ def load_and_filter(path, sheet):
 
 
 def clean_table(df):
+    # Parseo geográfico
     parsed = df[GEO_COL].apply(parse_geo)
     df["locality"] = parsed["locality"]
     df["admin_region"] = parsed["admin_region"]
 
-    biome_col = "Biome_2" if "Biome_2" in df.columns else "Biome 2"
-    df["ecozone"] = df[biome_col].map(BIOME2_MAP)
-
+    # Eliminar columnas vacías + las siempre eliminadas
     empty_cols = [c for c in df.columns if df[c].isna().all()]
-    to_drop = set(DROP_ALWAYS + empty_cols + [GEO_COL, biome_col])
+    to_drop = set(DROP_ALWAYS + empty_cols + [GEO_COL])
     df = df.drop(columns=[c for c in to_drop if c in df.columns])
 
+    # Renombrar
     df = df.rename(columns={k: v for k, v in RENAME.items() if k in df.columns})
+
+    # Ecozona desde altitud
+    if "altitude_masl" in df.columns:
+        df["ecozone"] = df["altitude_masl"].apply(assign_ecozone)
 
     return df
 
 
-def build_sites(tables, corrections_path):
+def build_sites(tables):
     def first_notnull(s):
         vals = s.dropna()
         return vals.iloc[0] if len(vals) else None
@@ -196,52 +198,12 @@ def build_sites(tables, corrections_path):
     ]
     sites_raw = pd.concat(frames, ignore_index=True)
     sites = sites_raw.groupby("site_name").agg(first_notnull).reset_index()
-
-    all_ecozones = (
-        pd.concat([tbl[["site_name", "ecozone"]] for tbl in tables.values()])
-        .groupby("site_name")["ecozone"]
-        .nunique()
-    )
-    conflicted = all_ecozones[all_ecozones > 1].index.tolist()
-
-    corrections_path = Path(corrections_path)
-
-    if not corrections_path.exists():
-        conflict_rows = []
-        for site in conflicted:
-            ecozones = (
-                pd.concat([tbl[["site_name", "ecozone"]] for tbl in tables.values()])
-                .query("site_name == @site")["ecozone"]
-                .dropna()
-                .unique()
-                .tolist()
-            )
-            current = sites.loc[sites["site_name"] == site, "ecozone"].values[0]
-            conflict_rows.append({
-                "site_name": site,
-                "ecozone_in_data": " | ".join(ecozones),
-                "ecozone_corrected": current,
-                "notes": "",
-            })
-        corrections_df = pd.DataFrame(conflict_rows)
-        corrections_path.parent.mkdir(parents=True, exist_ok=True)
-        corrections_df.to_csv(corrections_path, index=False)
-        print(f"  → Archivo de correcciones generado: {corrections_path}")
-        print(f"    Revisá y editá 'ecozone_corrected' para los {len(conflicted)} sitios con conflicto.")
-    else:
-        corrections_df = pd.read_csv(corrections_path)
-        for _, row in corrections_df.iterrows():
-            if pd.notna(row["ecozone_corrected"]):
-                sites.loc[sites["site_name"] == row["site_name"], "ecozone"] = row["ecozone_corrected"]
-        print(f"  → Correcciones aplicadas desde {corrections_path} ({len(corrections_df)} sitios).")
-
     return sites
 
 
 def main(input_path, outdir):
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
-    corrections_path = Path(outdir).parent / "corrections" / "site_corrections.csv"
 
     print("Cargando y filtrando datos...")
     tables = {}
@@ -252,7 +214,7 @@ def main(input_path, outdir):
         print(f"  {sheet}: {tables[sheet.lower()].shape}")
 
     print("\nConstruyendo arid_sites...")
-    sites = build_sites(tables, corrections_path)
+    sites = build_sites(tables)
     print(f"  arid_sites: {sites.shape}")
 
     print("\nGuardando CSVs...")
