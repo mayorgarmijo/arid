@@ -101,8 +101,6 @@ arid_merge("humans", long = TRUE)
 
 ARID compiles data from peer-reviewed publications. Each record includes a short citation (`reference_short`) and a DOI (`doi`) linking to the original source.
 
-This repository is derived from the South American Archaeological Isotopic Database (SAAID), filtered to the Atacama Desert region of northern Chile.
-
 ## Contributing
 
 Contributions are welcome. To add new data or correct existing records, please open an issue or submit a pull request on [GitHub](https://github.com/mayorgarmijo/arid).
