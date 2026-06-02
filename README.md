@@ -20,7 +20,6 @@ ARID includes four datasets:
 | `arid_plants` | Isotopic data from botanical remains | 576 |
 | `arid_sites` | Archaeological site information with geographic and chronological context | 203 |
 
-All datasets cover the full chronological sequence of northern Chile.
 
 ### Key isotopic variables
 
