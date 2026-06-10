@@ -61,17 +61,15 @@ humans_with_context <- arid_merge("humans")
 # Combine all tables
 all_samples <- arid_merge()
 
-# Filter by ecozone
-library(dplyr)
-coastal <- arid_merge("humans") |>
-  filter(ecozone == "Coast")
+# Filter by ecozone using arid_filter()
+coastal <- arid_filter(tables = "humans", ecozone = "Coast")
 
 # Filter by administrative region
-antofagasta <- arid_merge("humans") |>
-  filter(admin_region == "Antofagasta")
+antofagasta <- arid_filter(tables = "humans", admin_region = "Antofagasta")
 
-# Filter by tissue type
-collagen_only <- arid_merge("humans") |>
+# Filter by tissue type (still requires dplyr after arid_filter)
+library(dplyr)
+collagen_only <- arid_filter(tables = "humans", ecozone = "Coast") |>
   filter(grepl("collagen", tissue, ignore.case = TRUE))
 
 # Long format for tissue-level analysis
@@ -94,6 +92,30 @@ arid_merge()  # all three tables
 
 # Long format — one row per tissue block (organic / carbonate)
 arid_merge("humans", long = TRUE)
+```
+
+## The `arid_filter()` function
+
+`arid_filter()` wraps `arid_merge()` and applies contextual filters in a single call. At least one filter argument must be provided. All arguments accept character vectors for multi-value filtering (OR logic within each argument, AND logic across arguments).
+
+```r
+# Filtrar por ecozona
+arid_filter(ecozone = "Altiplano")
+
+# Varias ecozonas a la vez
+arid_filter(ecozone = c("Coast", "Lowlands"))
+
+# Combinar filtros
+arid_filter(tables = "humans", ecozone = "Altiplano", admin_region = "Antofagasta")
+
+# Por período cronológico
+arid_filter(period = "Early Archaic (Northern Chile)")
+
+# Por localidad
+arid_filter(locality = "Lower Azapa Valley")
+
+# Con formato largo
+arid_filter(tables = "humans", ecozone = "Coast", long = TRUE)
 ```
 
 ## Data sources
