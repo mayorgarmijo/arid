@@ -33,21 +33,30 @@ arid_filter(
 Passed directly to \code{arid_merge()}. Default is \code{FALSE}.}
 }
 \value{
-A filtered data frame with sample data joined to site context.
+A filtered data frame.
 }
 \description{
 Calls \code{arid_merge()} internally and filters the result by one or more
 contextual variables. At least one filter argument must be provided.
-Multiple values per argument are accepted (treated as OR within that filter).
+Multiple values per argument are accepted (OR logic within each argument,
+AND logic across arguments).
+
+Llama a \code{arid_merge()} internamente y filtra el resultado por una o más
+variables contextuales. Debe proporcionarse al menos un argumento de filtro.
+Cada argumento acepta vectores de valores (lógica OR dentro del argumento,
+lógica AND entre argumentos).
 }
 \examples{
-# Humanos del Altiplano
+# Humans from the Altiplano
 arid_filter(tables = "humans", ecozone = "Altiplano")
 
-# Varias ecozonas y región administrativa
+# Multiple ecozones and an administrative region
 arid_filter(ecozone = c("Coast", "Lowlands"), admin_region = "Antofagasta")
 
-# Período específico en formato largo
+# Specific period in long format
 arid_filter(period = "Early Archaic (Northern Chile)", long = TRUE)
 
+}
+\seealso{
+\code{\link[=arid_merge]{arid_merge()}} for the underlying combine function.
 }

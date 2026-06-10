@@ -3,7 +3,13 @@
 #' @description
 #' Calls `arid_merge()` internally and filters the result by one or more
 #' contextual variables. At least one filter argument must be provided.
-#' Multiple values per argument are accepted (treated as OR within that filter).
+#' Multiple values per argument are accepted (OR logic within each argument,
+#' AND logic across arguments).
+#'
+#' Llama a `arid_merge()` internamente y filtra el resultado por una o más
+#' variables contextuales. Debe proporcionarse al menos un argumento de filtro.
+#' Cada argumento acepta vectores de valores (lógica OR dentro del argumento,
+#' lógica AND entre argumentos).
 #'
 #' @param tables Character vector. One or more of `"humans"`, `"animals"`,
 #'   `"plants"`. Defaults to all three.
@@ -18,16 +24,18 @@
 #' @param long Logical. If `TRUE`, reshapes isotope columns to long format.
 #'   Passed directly to `arid_merge()`. Default is `FALSE`.
 #'
-#' @return A filtered data frame with sample data joined to site context.
+#' @return A filtered data frame.
+#'
+#' @seealso [arid_merge()] for the underlying combine function.
 #'
 #' @examples
-#' # Humanos del Altiplano
+#' # Humans from the Altiplano
 #' arid_filter(tables = "humans", ecozone = "Altiplano")
 #'
-#' # Varias ecozonas y región administrativa
+#' # Multiple ecozones and an administrative region
 #' arid_filter(ecozone = c("Coast", "Lowlands"), admin_region = "Antofagasta")
 #'
-#' # Período específico en formato largo
+#' # Specific period in long format
 #' arid_filter(period = "Early Archaic (Northern Chile)", long = TRUE)
 #'
 #' @export
@@ -40,20 +48,25 @@ arid_filter <- function(tables = c("humans", "animals", "plants"),
 
   # Validar que se proporcionó al menos un filtro
   if (is.null(ecozone) && is.null(admin_region) && is.null(period) && is.null(locality)) {
-    stop("Debe especificarse al menos un filtro: ecozone, admin_region, period o locality.")
+    stop("At least one filter must be provided: ecozone, admin_region, period, or locality.")
   }
 
-  valid <- c("humans", "animals", "plants")
+  valid  <- c("humans", "animals", "plants")
   tables <- match.arg(tables, valid, several.ok = TRUE)
 
-  # Obtener datos combinados con contexto de sitio
+  # Obtener datos combinados
   result <- arid_merge(tables = tables, long = long)
 
-  # Aplicar filtros para cada argumento no-NULL
-  if (!is.null(ecozone))      result <- dplyr::filter(result, .data$ecozone      %in% ecozone)
-  if (!is.null(admin_region)) result <- dplyr::filter(result, .data$admin_region %in% admin_region)
-  if (!is.null(period))       result <- dplyr::filter(result, .data$period       %in% period)
-  if (!is.null(locality))     result <- dplyr::filter(result, .data$locality     %in% locality)
+  # Capturar valores antes del filter para evitar ambigüedad con nombres de columna
+  ez  <- ecozone
+  ar  <- admin_region
+  per <- period
+  loc <- locality
+
+  if (!is.null(ez))  result <- dplyr::filter(result, .data$ecozone      %in% ez)
+  if (!is.null(ar))  result <- dplyr::filter(result, .data$admin_region %in% ar)
+  if (!is.null(per)) result <- dplyr::filter(result, .data$period       %in% per)
+  if (!is.null(loc)) result <- dplyr::filter(result, .data$locality     %in% loc)
 
   result
 }

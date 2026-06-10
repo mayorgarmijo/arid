@@ -1,61 +1,55 @@
-#' Merge ARID tables with site information
+#' Combine ARID sample tables
 #'
 #' @description
-#' Joins one or more ARID sample tables with `arid_sites`, adding geographic,
-#' chronological and ecological context to each sample. Optionally reshapes
-#' isotope data to long format for tissue-level analysis.
+#' Binds one or more ARID sample tables into a single data frame. Each table
+#' already includes site-level context (locality, admin_region, ecozone, period,
+#' coordinates). When more than one table is selected, a `source` column
+#' identifies the origin of each row. Optionally reshapes isotope data to long
+#' format for tissue-level analysis.
+#'
+#' Combina una o más tablas de muestras ARID en un único data frame. Cada tabla
+#' ya incluye contexto de sitio (locality, admin_region, ecozone, period,
+#' coordenadas). Cuando se selecciona más de una tabla, una columna `source`
+#' identifica la tabla de origen de cada fila.
 #'
 #' @param tables Character vector. One or more of `"humans"`, `"animals"`,
 #'   `"plants"`. Defaults to all three.
 #' @param long Logical. If `TRUE`, reshapes isotope columns to long format
-#'   (one row per tissue measurement). Default is `FALSE`.
+#'   (one row per tissue block: organic / carbonate). Default is `FALSE`.
 #'
-#' @return A data frame with sample data joined to site context. If
-#'   `length(tables) > 1`, a `source` column identifies the original table.
+#' @return A data frame. If `length(tables) > 1`, includes a `source` column.
+#'
+#' @seealso [arid_filter()] to combine and filter in a single call.
 #'
 #' @examples
-#' # Humans with site context
+#' # Single table
 #' arid_merge("humans")
 #'
-#' # All tables combined
+#' # All tables combined — adds a 'source' column
 #' arid_merge()
 #'
-#' # Long format for tissue comparison
+#' # Long format: one row per tissue block
 #' arid_merge("humans", long = TRUE)
 #'
 #' @export
 arid_merge <- function(tables = c("humans", "animals", "plants"), long = FALSE) {
 
-  valid <- c("humans", "animals", "plants")
+  valid  <- c("humans", "animals", "plants")
   tables <- match.arg(tables, valid, several.ok = TRUE)
-
-  # Columnas de sitio a agregar
-  site_cols <- c(
-    "site_name", "locality", "admin_region", "ecozone",
-    "lat", "lon", "altitude_masl",
-    "period", "period_from", "period_to"
-  )
-  sites_sub <- arid_sites[, intersect(site_cols, colnames(arid_sites))]
 
   # Cargar y combinar tablas solicitadas
   frames <- lapply(tables, function(tbl) {
     df <- switch(tbl,
                  humans  = arid_humans,
                  animals = arid_animals,
-                 plants  = arid_plants
-    )
+                 plants  = arid_plants)
     if (length(tables) > 1) df$source <- tbl
     df
   })
 
-  combined <- dplyr::bind_rows(frames)
+  result <- dplyr::bind_rows(frames)
 
-  # Join con arid_sites — evitar duplicar columnas ya existentes
-  site_add <- setdiff(colnames(sites_sub), colnames(combined))
-  sites_join <- sites_sub[, c("site_name", site_add), drop = FALSE]
-  result <- merge(combined, sites_join, by = "site_name", all.x = TRUE)
-
-  # Formato long (una fila por bloque de tejido)
+  # Formato long: una fila por bloque de tejido (orgánico / carbonato)
   if (long) {
     iso_organic   <- c("tissue", "element", "tissue_age",
                        "yield_pct", "wt_C", "wt_N", "CN_ratio",
@@ -71,7 +65,6 @@ arid_merge <- function(tables = c("humans", "animals", "plants"), long = FALSE) 
 
       df_organic <- result[, c(base_cols, cols_organic)]
       df_organic$tissue_block <- "organic"
-      names(df_organic) <- gsub("_carbonate$", "", names(df_organic))
 
       df_carbonate <- result[, c(base_cols, cols_carbonate)]
       df_carbonate$tissue_block <- "carbonate"

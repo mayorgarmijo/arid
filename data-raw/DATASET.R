@@ -1,21 +1,11 @@
-## code to prepare `DATASET` dataset goes here
-
-usethis::use_data(DATASET, overwrite = TRUE)
-dir.create("corrections")
+# Script para regenerar los objetos de datos del paquete ARID.
+# Ejecutar desde la raíz del proyecto con: source("data-raw/DATASET.R")
 
 library(usethis)
 
-arid_humans  <- read.csv("data-raw/arid_humans.csv")
-arid_animals <- read.csv("data-raw/arid_animals.csv")
-arid_plants  <- read.csv("data-raw/arid_plants.csv")
-arid_sites   <- read.csv("data-raw/arid_sites.csv")
+arid_humans  <- read.csv("data-raw/arid_humans.csv",  stringsAsFactors = FALSE)
+arid_animals <- read.csv("data-raw/arid_animals.csv", stringsAsFactors = FALSE)
+arid_plants  <- read.csv("data-raw/arid_plants.csv",  stringsAsFactors = FALSE)
+arid_sites   <- read.csv("data-raw/arid_sites.csv",   stringsAsFactors = FALSE)
 
-use_data(arid_humans, arid_animals, arid_plants, arid_sites)
-
-
-library(ARID)
-head(arid_humans)
-nrow(arid_sites)
-
-library(ARID)
-head(arid_humans)
+use_data(arid_humans, arid_animals, arid_plants, arid_sites, overwrite = TRUE)

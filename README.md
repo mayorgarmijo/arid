@@ -55,19 +55,17 @@ library(ARID)
 head(arid_humans)
 head(arid_sites)
 
-# Merge sample data with site context
-humans_with_context <- arid_merge("humans")
-
-# Combine all tables
+# Combine tables
 all_samples <- arid_merge()
+humans      <- arid_merge("humans")
 
-# Filter by ecozone using arid_filter()
+# Filter by ecozone
 coastal <- arid_filter(tables = "humans", ecozone = "Coast")
 
 # Filter by administrative region
 antofagasta <- arid_filter(tables = "humans", admin_region = "Antofagasta")
 
-# Filter by tissue type (still requires dplyr after arid_filter)
+# Filter further with dplyr if needed
 library(dplyr)
 collagen_only <- arid_filter(tables = "humans", ecozone = "Coast") |>
   filter(grepl("collagen", tissue, ignore.case = TRUE))
@@ -78,7 +76,7 @@ humans_long <- arid_merge("humans", long = TRUE)
 
 ## The `arid_merge()` function
 
-`arid_merge()` joins any combination of sample tables with `arid_sites`, adding geographic and chronological context to each sample.
+`arid_merge()` combines one or more sample tables into a single data frame. Each table already contains site-level context (ecozone, locality, region, coordinates, period). When more than one table is selected, a `source` column identifies the origin of each row.
 
 ```r
 # Single table
@@ -99,24 +97,30 @@ arid_merge("humans", long = TRUE)
 `arid_filter()` wraps `arid_merge()` and applies contextual filters in a single call. At least one filter argument must be provided. All arguments accept character vectors for multi-value filtering (OR logic within each argument, AND logic across arguments).
 
 ```r
-# Filtrar por ecozona
+# Filter by ecozone
 arid_filter(ecozone = "Altiplano")
 
-# Varias ecozonas a la vez
+# Multiple ecozones at once
 arid_filter(ecozone = c("Coast", "Lowlands"))
 
-# Combinar filtros
+# Combine filters (AND logic)
 arid_filter(tables = "humans", ecozone = "Altiplano", admin_region = "Antofagasta")
 
-# Por período cronológico
+# By chronological period
 arid_filter(period = "Early Archaic (Northern Chile)")
 
-# Por localidad
+# By locality
 arid_filter(locality = "Lower Azapa Valley")
 
-# Con formato largo
+# Long format
 arid_filter(tables = "humans", ecozone = "Coast", long = TRUE)
 ```
+
+## Citation
+
+If you use ARID in a publication, please cite it as:
+
+> Mayorga, D. (*year*). ARID: Atacama Repository of Isotopic Data. R package. https://github.com/mayorgarmijo/arid
 
 ## Data sources
 
@@ -128,4 +132,4 @@ Contributions are welcome. To add new data or correct existing records, please o
 
 ## License
 
-Data: [CC BY 4.0](LICENSE.md)
+Code: [GPL (≥ 3)](LICENSE.md) · Data: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

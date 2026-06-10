@@ -2,7 +2,7 @@
 % Please edit documentation in R/arid_merge.R
 \name{arid_merge}
 \alias{arid_merge}
-\title{Merge ARID tables with site information}
+\title{Combine ARID sample tables}
 \usage{
 arid_merge(tables = c("humans", "animals", "plants"), long = FALSE)
 }
@@ -11,25 +11,34 @@ arid_merge(tables = c("humans", "animals", "plants"), long = FALSE)
 \code{"plants"}. Defaults to all three.}
 
 \item{long}{Logical. If \code{TRUE}, reshapes isotope columns to long format
-(one row per tissue measurement). Default is \code{FALSE}.}
+(one row per tissue block: organic / carbonate). Default is \code{FALSE}.}
 }
 \value{
-A data frame with sample data joined to site context. If
-\code{length(tables) > 1}, a \code{source} column identifies the original table.
+A data frame. If \code{length(tables) > 1}, includes a \code{source} column.
 }
 \description{
-Joins one or more ARID sample tables with \code{arid_sites}, adding geographic,
-chronological and ecological context to each sample. Optionally reshapes
-isotope data to long format for tissue-level analysis.
+Binds one or more ARID sample tables into a single data frame. Each table
+already includes site-level context (locality, admin_region, ecozone, period,
+coordinates). When more than one table is selected, a \code{source} column
+identifies the origin of each row. Optionally reshapes isotope data to long
+format for tissue-level analysis.
+
+Combina una o más tablas de muestras ARID en un único data frame. Cada tabla
+ya incluye contexto de sitio (locality, admin_region, ecozone, period,
+coordenadas). Cuando se selecciona más de una tabla, una columna \code{source}
+identifica la tabla de origen de cada fila.
 }
 \examples{
-# Humans with site context
+# Single table
 arid_merge("humans")
 
-# All tables combined
+# All tables combined — adds a 'source' column
 arid_merge()
 
-# Long format for tissue comparison
+# Long format: one row per tissue block
 arid_merge("humans", long = TRUE)
 
+}
+\seealso{
+\code{\link[=arid_filter]{arid_filter()}} to combine and filter in a single call.
 }
