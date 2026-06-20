@@ -5,18 +5,18 @@
 \alias{arid_sites}
 \title{Archaeological site information for the Atacama Desert}
 \format{
-A data frame with 203 rows and 10 columns:
+A data frame with 422 rows and 10 columns:
 \describe{
 \item{site_name}{Archaeological site identifier (primary key) / Identificador del sitio (clave primaria)}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{locality}{Broader locality or valley (e.g. Lower Azapa Valley) / Localidad o valle (e.g. Valle Azapa Bajo)}
-\item{admin_region}{Administrative region: Arica y Parinacota, Tarapacá, or Antofagasta / Región administrativa}
-\item{ecozone}{Ecological zone based on altitude: Coast (< 130 masl), Lowlands (130–1700 masl), Precordillera (1700–3700 masl), or Altiplano (> 3700 masl) / Zona ecológica basada en altitud}
-\item{period}{Broad cultural or chronological period / Período cultural o cronológico amplio}
-\item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
-\item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
+\item{locality}{Broader locality or valley / Localidad o valle}
+\item{admin_region}{Administrative region / Región administrativa}
+\item{ecozone}{Ecological zone: Coast, Lowlands, Precordillera, or Altiplano / Zona ecológica}
+\item{period}{Sub-period or phase / Subperíodo o fase}
+\item{period_from}{Start of cultural period (BCE/CE) / Inicio del período (a.C./d.C.)}
+\item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
 }
 }
 \source{
@@ -26,12 +26,13 @@ ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmi
 arid_sites
 }
 \description{
-Geographic, ecological, and chronological context for 203 archaeological
-sites included in ARID. This table links site names to administrative regions,
-ecozones, coordinates, and cultural periods.
+Geographic, ecological, and chronological context for archaeological sites
+included in ARID, including sites from isotopic sample tables and radiocarbon
+databases. Links site names to administrative regions, ecozones, coordinates,
+and cultural periods.
 
-Contexto geográfico, ecológico y cronológico de 203 sitios arqueológicos
-incluidos en ARID. Esta tabla vincula los nombres de sitio con regiones
-administrativas, ecozonas, coordenadas y períodos culturales.
+Contexto geográfico, ecológico y cronológico de los sitios arqueológicos
+incluidos en ARID, incluyendo sitios de las tablas de muestras isotópicas y
+de bases de datos radiocarbónicas.
 }
 \keyword{datasets}

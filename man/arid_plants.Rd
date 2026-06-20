@@ -5,41 +5,37 @@
 \alias{arid_plants}
 \title{Plant isotopic data from the Atacama Desert}
 \format{
-A data frame with 576 rows and 33 columns:
+A data frame with 576 rows and 29 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{period}{Broad cultural or chronological period / Período cultural o cronológico amplio}
-\item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
-\item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
-\item{c14_method}{Radiocarbon dating method / Método de datación radiocarbónica}
-\item{c14_lab_code}{Laboratory code for the radiocarbon date / Código de laboratorio}
-\item{c14_bp}{Radiocarbon age in years BP / Edad radiocarbónica en años AP}
-\item{c14_error}{Standard error of the radiocarbon date / Error estándar de la datación}
-\item{c14_cal_from}{Lower bound of calibrated date range (cal BP) / Límite inferior del rango calibrado}
-\item{c14_cal_to}{Upper bound of calibrated date range (cal BP) / Límite superior del rango calibrado}
-\item{lab_id}{Laboratory sample identifier / Identificador de muestra en laboratorio}
-\item{type_source}{Whether the plant is wild or cultivated / Si la planta es silvestre o cultivada}
+\item{period}{Sub-period or phase / Subperíodo o fase}
+\item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período (a.C./d.C.)}
+\item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
+\item{lab_id}{Laboratory identifier linking to \code{arid_c14} / Identificador de laboratorio}
+\item{type_source}{Data type (primary or secondary source) / Tipo de fuente}
 \item{taxon_local}{Local common name of the taxon / Nombre local del taxón}
-\item{genus_species}{Scientific name (genus and species) / Nombre científico}
-\item{photosynthetic_pathway}{Photosynthetic pathway (C3, C4, or CAM) / Vía fotosintética}
-\item{plant_domesticate}{Whether the plant is a domesticate / Si la planta es un domesticado}
-\item{sample_type}{Type of sample / Tipo de muestra}
+\item{genus_species}{Scientific name / Nombre científico}
+\item{photosynthetic_pathway}{Photosynthetic pathway: C3, C4, or CAM / Vía fotosintética}
+\item{plant_domesticate}{Domestication status: Wild, Crop, or Managed / Estado de domesticación: Wild, Crop o Managed}
+\item{sample_type}{Physical sample type / Tipo de muestra física}
 \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-\item{d13C}{δ¹³C (‰ VPDB)}
-\item{d15N}{δ¹⁵N (‰ AIR)}
-\item{d34S}{δ³⁴S (‰ VCDT)}
-\item{Sr87_Sr86}{⁸⁷Sr/⁸⁶Sr strontium isotope ratio / Relación isotópica de estroncio}
-\item{reference_short}{Short citation for the data source / Referencia bibliográfica abreviada}
-\item{doi}{DOI linking to the original publication / DOI de la publicación original}
+\item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
+\item{d15N}{delta-15N (per mille AIR) / delta-15N (por mil AIR)}
+\item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+\item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
+\item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
+\item{doi}{DOI of the original publication / DOI de la publicación original}
 \item{locality}{Site locality / Localidad del sitio}
 \item{admin_region}{Administrative region / Región administrativa}
-\item{ecozone}{Ecological zone: Coast, Lowlands, Precordillera, or Altiplano / Zona ecológica}
+\item{ecozone}{Ecological zone / Zona ecológica}
+\item{period_broad}{Broad period category / Período general}
+\item{has_c14}{Whether a direct radiocarbon date exists in \code{arid_c14} / Si existe fechado radiocarbónico en \code{arid_c14}}
 }
 }
 \source{
@@ -51,10 +47,12 @@ arid_plants
 \description{
 Stable isotope measurements from botanical remains (seeds, stems, leaves,
 charcoal, and other plant materials) recovered at archaeological sites in
-northern Chile.
+northern Chile. Radiocarbon dates are stored separately in \code{arid_c14}.
 
-Mediciones de isótopos estables de restos botánicos (semillas, tallos, hojas,
-carbón y otros materiales vegetales) provenientes de sitios arqueológicos del
-norte de Chile.
+Mediciones de isótopos estables de restos botánicos de sitios arqueológicos
+del norte de Chile. Los fechados radiocarbónicos se almacenan en \code{arid_c14}.
+}
+\seealso{
+\link{arid_c14} for radiocarbon dates; \code{\link[=arid_chronology]{arid_chronology()}} to assign dates.
 }
 \keyword{datasets}

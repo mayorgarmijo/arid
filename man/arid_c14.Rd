@@ -5,52 +5,56 @@
 \alias{arid_c14}
 \title{Radiocarbon dates from the Atacama Desert}
 \format{
-A data frame with 1,003 rows and 23 columns:
+A data frame with 1,127 rows and 26 columns:
 \describe{
-\item{record_id}{Sequential record identifier / Identificador secuencial de registro}
-\item{admin_region}{Administrative region: Arica y Parinacota or Tarapacá / Región administrativa}
-\item{basin}{Hydrological basin or coastal zone / Cuenca hidrológica o zona costera}
-\item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{altitudinal_belt}{Altitudinal belt label from original publication / Piso altitudinal según publicación original}
+\item{record_id}{Sequential record identifier / Identificador secuencial}
+\item{lab_id}{Laboratory identifier of the isotopic sample (NA for context-level dates) / Identificador del laboratorio isotópico (NA para fechados de contexto)}
+\item{sample_id}{Sample identifier of the isotopic sample (NA for context-level dates) / Identificador de la muestra isotópica}
 \item{site_name}{Archaeological site name / Nombre del sitio arqueológico}
-\item{unit}{Excavation unit / Unidad de excavación}
-\item{sub_unit}{Sub-unit within the excavation unit / Sub-unidad dentro de la unidad de excavación}
+\item{locality}{Locality or hydrological basin / Localidad o cuenca hidrológica}
+\item{admin_region}{Administrative region / Región administrativa}
+\item{ecozone}{Ecological zone / Zona ecológica}
+\item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
+\item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
+\item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
 \item{c14_lab_code}{Radiocarbon laboratory code / Código de laboratorio de radiocarbono}
-\item{material}{Broad material category dated / Categoría general del material fechado}
-\item{material_detail}{Specific material description / Descripción específica del material}
 \item{c14_bp}{Conventional radiocarbon age (years BP) / Edad radiocarbónica convencional (años AP)}
-\item{c14_error}{Measurement error (±1σ) / Error de medición (±1σ)}
-\item{d13C_ams}{δ¹³C value used for AMS fractionation correction (‰ VPDB) — not for dietary analysis / Valor de δ¹³C para corrección de fraccionamiento AMS (‰ VPDB) — no para análisis dietético}
-\item{reference_short}{Short bibliographic reference / Referencia bibliográfica abreviada}
-\item{context_domestic}{Domestic context flag (X = yes) / Indicador de contexto doméstico (X = sí)}
-\item{context_funerary}{Funerary context flag (X = yes) / Indicador de contexto funerario (X = sí)}
-\item{context_agriculture}{Agricultural context flag (X = yes) / Indicador de contexto agrícola (X = sí)}
-\item{context_other}{Other context flag (X = yes) / Indicador de otro tipo de contexto (X = sí)}
-\item{c14_cal_from}{Calibrated age range start (cal BP, 2σ 95\%) / Inicio del rango de edad calibrada (cal AP, 2σ 95\%)}
-\item{c14_cal_to}{Calibrated age range end (cal BP, 2σ 95\%) / Fin del rango de edad calibrada (cal AP, 2σ 95\%)}
-\item{c14_cal_median}{Median calibrated age (cal BP) / Mediana de la edad calibrada (cal AP)}
-\item{ecozone}{Ecological zone based on altitude: Coast (< 130 masl), Lowlands (130–1700 masl), Precordillera (1700–3700 masl), or Altiplano (> 3700 masl) / Zona ecológica basada en altitud}
+\item{c14_error}{Measurement error (plus or minus 1 sigma) / Error de medición (mas o menos 1 sigma)}
+\item{c14_cal_from}{Calibrated age range start (BCE/CE; negative = BCE) / Inicio del rango calibrado (a.C./d.C.; negativo = a.C.)}
+\item{c14_cal_to}{Calibrated age range end (BCE/CE) / Fin del rango calibrado (a.C./d.C.)}
+\item{material}{Material category dated / Categoría del material fechado}
+\item{source_table}{Origin of the record: "humans", "animals", "plants", or "mendez_quiros_2023" / Origen del registro}
+\item{unit}{Excavation unit (context-level dates only) / Unidad de excavación}
+\item{sub_unit}{Sub-unit (context-level dates only) / Sub-unidad}
+\item{material_detail}{Detailed material description (context-level dates only) / Descripción detallada del material}
+\item{d13C_ams}{delta-13C for AMS fractionation correction (per mille VPDB) — not for dietary analysis / delta-13C para corrección AMS — no para análisis dietético}
+\item{context_domestic}{Domestic context flag (X = yes; context-level dates only) / Contexto doméstico}
+\item{context_funerary}{Funerary context flag (X = yes; context-level dates only) / Contexto funerario}
+\item{context_agriculture}{Agricultural context flag (X = yes; context-level dates only) / Contexto agrícola}
+\item{context_other}{Other context flag (X = yes; context-level dates only) / Otro contexto}
+\item{c14_cal_median}{Median calibrated age (BCE/CE; context-level dates only) / Mediana de la edad calibrada (a.C./d.C.)}
 }
 }
 \source{
-Méndez-Quiros, P., et al. (2023). Supplementary material. Available via ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmijo/arid}
+ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmijo/arid}
 }
 \usage{
 arid_c14
 }
 \description{
-A compilation of 1,003 radiocarbon dates from archaeological contexts in the
-Tarapacá and Arica y Parinacota regions of northern Chile, derived from the
-supplementary material of Méndez-Quiros et al. (2023). Includes contextual
-information (site, unit, material, context type) and calibrated age ranges.
-The \code{d13C_ams} column contains δ¹³C values used for AMS correction, not
-for dietary isotopic analysis.
+A compilation of radiocarbon dates from archaeological contexts in northern
+Chile, integrating dates from published radiocarbon databases and from
+isotopic samples in ARID. Records linked to isotopic samples (humans, animals,
+plants) can be joined via \code{lab_id}. The \code{d13C_ams} column contains delta-13C
+values used for AMS fractionation correction, not for dietary analysis.
 
-Compilación de 1,003 fechados radiocarbónicos de contextos arqueológicos de
-las regiones de Tarapacá y Arica y Parinacota (norte de Chile), obtenidos del
-material suplementario de Méndez-Quiros et al. (2023). Incluye información
-contextual (sitio, unidad, material, tipo de contexto) y rangos de edad
-calibrada. La columna \code{d13C_ams} contiene valores de δ¹³C utilizados para
-la corrección AMS, no para análisis isotópico dietético.
+Compilación de fechados radiocarbónicos de contextos arqueológicos del norte
+de Chile, integrando fechados de bases de datos publicadas y de muestras
+isotópicas de ARID. Los registros vinculados a muestras isotópicas se pueden
+unir mediante \code{lab_id}. La columna \code{d13C_ams} contiene valores de delta-13C
+para corrección de fraccionamiento AMS, no para análisis dietético.
+}
+\seealso{
+\code{\link[=arid_chronology]{arid_chronology()}} to assign dates to isotopic samples.
 }
 \keyword{datasets}

@@ -4,14 +4,11 @@
 \alias{arid_merge}
 \title{Combine ARID sample tables}
 \usage{
-arid_merge(tables = c("humans", "animals", "plants"), long = FALSE)
+arid_merge(tables = c("humans", "animals", "plants"))
 }
 \arguments{
 \item{tables}{Character vector. One or more of \code{"humans"}, \code{"animals"},
 \code{"plants"}. Defaults to all three.}
-
-\item{long}{Logical. If \code{TRUE}, reshapes isotope columns to long format
-(one row per tissue block: organic / carbonate). Default is \code{FALSE}.}
 }
 \value{
 A data frame. If \code{length(tables) > 1}, includes a \code{source} column.
@@ -19,14 +16,15 @@ A data frame. If \code{length(tables) > 1}, includes a \code{source} column.
 \description{
 Binds one or more ARID sample tables into a single data frame. Each table
 already includes site-level context (locality, admin_region, ecozone, period,
-coordinates). When more than one table is selected, a \code{source} column
-identifies the origin of each row. Optionally reshapes isotope data to long
-format for tissue-level analysis.
+coordinates) and is stored in long format (one row per tissue analysed). When
+more than one table is selected, a \code{source} column identifies the origin of
+each row.
 
 Combina una o más tablas de muestras ARID en un único data frame. Cada tabla
 ya incluye contexto de sitio (locality, admin_region, ecozone, period,
-coordenadas). Cuando se selecciona más de una tabla, una columna \code{source}
-identifica la tabla de origen de cada fila.
+coordenadas) y está en formato largo (una fila por tejido analizado). Cuando
+se selecciona más de una tabla, una columna \code{source} identifica el origen de
+cada fila.
 }
 \examples{
 # Single table
@@ -35,10 +33,11 @@ arid_merge("humans")
 # All tables combined — adds a 'source' column
 arid_merge()
 
-# Long format: one row per tissue block
-arid_merge("humans", long = TRUE)
+# Only organic tissue rows
+subset(arid_merge("humans"), tissue_type == "organic")
 
 }
 \seealso{
-\code{\link[=arid_filter]{arid_filter()}} to combine and filter in a single call.
+\code{\link[=arid_filter]{arid_filter()}} to combine and filter in a single call;
+\code{\link[=arid_chronology]{arid_chronology()}} to assign dates to the result.
 }

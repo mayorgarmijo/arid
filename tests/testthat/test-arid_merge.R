@@ -20,10 +20,13 @@ test_that("arid_merge all tables combines all three", {
   expect_setequal(unique(result$source), c("humans", "animals", "plants"))
 })
 
-test_that("arid_merge long format adds tissue_block column", {
-  result <- arid_merge("humans", long = TRUE)
-  expect_true("tissue_block" %in% colnames(result))
-  expect_true(all(result$tissue_block %in% c("organic", "carbonate")))
+test_that("arid_merge data is already in long format with tissue_type column", {
+  result <- arid_merge("humans")
+  expect_true("tissue_type" %in% colnames(result))
+  expect_true(all(result$tissue_type %in% c("organic", "carbonate")))
+  # both tissue types are present
+  expect_true("organic" %in% result$tissue_type)
+  expect_true("carbonate" %in% result$tissue_type)
 })
 
 test_that("arid_merge rejects invalid table names", {

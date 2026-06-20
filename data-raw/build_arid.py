@@ -3,16 +3,20 @@ build_arid.py
 Construye las tablas limpias de ARID a partir del SAAID original.
 
 Uso:
-    python build_arid.py --input saaid_v_2_0_2023-2.xlsx --outdir ../data-raw
+    python3 build_arid.py --input saaid_v.2.0_2023_filtrado.xlsx --outdir .
+    python3 build_arid.py --input saaid.xlsx --outdir . --c14 mendez-quiros.xlsx
 
-Outputs:
-    arid_humans.csv
-    arid_animals.csv
-    arid_plants.csv
-    arid_sites.csv
+Outputs (.xlsx):
+    arid_humans.xlsx    — una fila por tejido analizado (formato largo)
+    arid_animals.xlsx   — una fila por tejido analizado (formato largo)
+    arid_plants.xlsx
+    arid_sites.xlsx
+    arid_c14.xlsx       — todos los fechados radiocarbónicos
 """
 
 import argparse
+import re
+import unicodedata
 import pandas as pd
 from pathlib import Path
 
@@ -23,7 +27,8 @@ TARGET_REGIONS = ["North Coast of Chile", "Northern Chile"]
 def assign_ecozone(alt):
     if pd.isna(alt):
         return None
-    elif alt < 130:
+    alt = float(alt)
+    if alt < 130:
         return "Coast"
     elif alt < 1700:
         return "Lowlands"
@@ -32,21 +37,84 @@ def assign_ecozone(alt):
     else:
         return "Altiplano"
 
+# ── Eliminar tildes (ASCII-safe) ──────────────────────────────────────────────
+def remove_accents(s):
+    if not isinstance(s, str):
+        return s
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s)
+        if unicodedata.category(c) != "Mn"
+    )
+
+def strip_accents_df(df):
+    """Aplica remove_accents a todas las columnas de tipo object."""
+    for col in df.select_dtypes(include="object").columns:
+        df[col] = df[col].map(lambda x: remove_accents(x) if isinstance(x, str) else x)
+    return df
+
+# ── Normalización de período ──────────────────────────────────────────────────
+def normalize_period(s):
+    if pd.isna(s):
+        return s
+    s = str(s)
+    s = re.sub(r"\s*\(Northern Chile\)", "", s)
+    s = re.sub(r"\s*\bPeriod\b", "", s)
+    s = re.sub(r"\s*\bHorizon\b", "", s)
+    return s.strip()
+
+PERIOD_BROAD_MAP = {
+    # Archaic
+    "Archaic":              "Archaic",
+    "Early Archaic":        "Archaic",
+    "Middle Archaic":       "Archaic",
+    "Late Archaic":         "Archaic",
+    "Middle/Late Archaic":  "Archaic",
+    # Formative
+    "Formative":                     "Formative",
+    "Early Formative":               "Formative",
+    "Middle Formative":              "Formative",
+    "Late Formative":                "Formative",
+    "Formative/Middle":              "Formative",
+    "Tarajne phase - Early Formative": "Formative",
+    # Middle
+    "Middle": "Middle",
+    # Late Intermediate
+    "Late Intermediate":             "Late Intermediate",
+    "Late Intermediate/Late":        "Late Intermediate",
+    "Late Intermediate-Late":        "Late Intermediate",
+    "Late Intermediate/Pica phase":  "Late Intermediate",
+    "Middle/Late Intermediate":      "Late Intermediate",
+    "Middle/Late Intermediate/Late": "Late Intermediate",
+    # Late
+    "Late":        "Late",
+    "Late Period":  "Late",
+    # Others
+    "Hispanic":               "Hispanic",
+    "Colonial":               "Colonial",
+    "Modern":                 "Modern",
+    "Archaeological (no date)": "Archaeological",
+}
+
+def infer_period_broad(period_normalized):
+    if pd.isna(period_normalized):
+        return None
+    return PERIOD_BROAD_MAP.get(str(period_normalized).strip(), None)
+
 # ── Normalización de región administrativa ────────────────────────────────────
 ADMIN_MAP = {
     "Arica and Parinacota Region": "Arica y Parinacota",
     "Parinacota and Arica Region": "Arica y Parinacota",
     "Arica and Parincota Region":  "Arica y Parinacota",
     "Parincota and Arica Region":  "Arica y Parinacota",
-    "Tarapacá Region":             "Tarapacá",
-    "Tarpacá Region":              "Tarapacá",
+    "Tarapacá Region":             "Tarapaca",
+    "Tarpacá Region":              "Tarapaca",
     "Antofagasta Region":          "Antofagasta",
     "Atacama Region":              "Atacama",
 }
 
 SPECIAL_LOCALITY = {
     "From Laguna Lejía (~4500 masl) to the eastern margin of the Salar de Atacama, near Talabre (2700 masl)":
-        ("Laguna Lejía to Salar de Atacama", "Antofagasta"),
+        ("Laguna Lejia to Salar de Atacama", "Antofagasta"),
 }
 
 GEO_COL = "Valley, locality, closest town, political jurisdiction"
@@ -138,12 +206,30 @@ RENAME = {
     "Periodo": "period_broad",
 }
 
+DOMESTICATE_MAP = {"Yes": "Crop", "No": "Wild", "Managed": "Managed"}
+
+# Columnas C14 que migran a arid_c14
+C14_COLS = ["c14_method", "c14_lab_code", "c14_bp", "c14_error",
+            "c14_cal_from", "c14_cal_to", "material_dated"]
+
 # ── Columnas que van a arid_sites ─────────────────────────────────────────────
 SITE_COLS = [
     "site_name", "lat", "lon", "altitude_masl",
     "locality", "admin_region", "ecozone",
     "period", "period_from", "period_to",
 ]
+
+# Mapeo renombre para reshaping a largo (carbonate src → dst)
+CARB_RENAME = {
+    "tissue_carbonate":         "tissue",
+    "element_carbonate":        "element",
+    "tissue_age_carbonate":     "tissue_age",
+    "tissue_age_carbonate_min": "tissue_age_min",
+    "tissue_age_carbonate_max": "tissue_age_max",
+    "d13C_carbonate":           "d13C",
+    "d18O_carbonate":           "d18O",
+}
+CARB_DETECT = ["d13C_carbonate", "d18O_carbonate"]
 
 
 # ── Funciones ─────────────────────────────────────────────────────────────────
@@ -186,10 +272,69 @@ def clean_table(df):
     if "altitude_masl" in df.columns:
         df["ecozone"] = df["altitude_masl"].apply(assign_ecozone)
 
+    # Normalizar período y derivar period_broad si no viene de la fuente
+    if "period" in df.columns:
+        df["period"] = df["period"].map(normalize_period)
+    if "period_broad" not in df.columns and "period" in df.columns:
+        df["period_broad"] = df["period"].map(infer_period_broad)
+
+    # Mapeo plant_domesticate
+    if "plant_domesticate" in df.columns:
+        df["plant_domesticate"] = df["plant_domesticate"].map(DOMESTICATE_MAP)
+
     return df
 
 
-def build_sites(tables):
+def extract_c14(df, source_table):
+    """Extrae filas con fechados C14 de una tabla de muestras."""
+    c14_present = [c for c in C14_COLS if c in df.columns]
+    detect_cols = [c for c in ["c14_bp", "c14_lab_code"] if c in df.columns]
+    if not detect_cols:
+        return pd.DataFrame()
+
+    has_c14 = df[detect_cols].notna().any(axis=1)
+    subset = df.loc[has_c14].copy()
+
+    context_cols = [c for c in ["lab_id", "sample_id", "site_name", "locality",
+                                 "admin_region", "ecozone", "altitude_masl",
+                                 "reference_short"] if c in subset.columns]
+    out = subset[context_cols + c14_present].copy()
+    out = out.rename(columns={"material_dated": "material"})
+    out["source_table"] = source_table
+    out["lab_id"]       = subset.get("lab_id", pd.Series(dtype=str))
+    return out
+
+
+def to_long(df):
+    """Reshapea tabla a formato largo: una fila por tejido analizado."""
+    organic_cols  = [c for c in ["tissue", "element", "tissue_age",
+                                  "tissue_age_min", "tissue_age_max",
+                                  "yield_pct", "wt_C", "wt_N", "CN_ratio",
+                                  "d13C", "d15N", "wt_S", "d34S"] if c in df.columns]
+    carbonate_src = [c for c in CARB_RENAME.keys() if c in df.columns]
+    detect_carb   = [c for c in CARB_DETECT if c in df.columns]
+
+    sr_col    = ["Sr87_Sr86"] if "Sr87_Sr86" in df.columns else []
+    base_cols = [c for c in df.columns
+                 if c not in organic_cols + carbonate_src + sr_col]
+
+    # Filas orgánicas
+    org = df[base_cols + organic_cols + sr_col].copy()
+    org["tissue_type"] = "organic"
+
+    if not carbonate_src or not detect_carb:
+        return org
+
+    # Filas carbonato (solo donde hay datos de carbonato)
+    has_carb = df[detect_carb].notna().any(axis=1)
+    carb = df.loc[has_carb, base_cols + carbonate_src].copy()
+    carb = carb.rename(columns={k: v for k, v in CARB_RENAME.items() if k in carb.columns})
+    carb["tissue_type"] = "carbonate"
+
+    return pd.concat([org, carb], ignore_index=True)
+
+
+def build_sites(tables, c14_df=None):
     def first_notnull(s):
         vals = s.dropna()
         return vals.iloc[0] if len(vals) else None
@@ -198,26 +343,30 @@ def build_sites(tables):
         tbl[[c for c in SITE_COLS if c in tbl.columns]].drop_duplicates()
         for tbl in tables.values()
     ]
+    if c14_df is not None:
+        c14_site_cols = [c for c in ["site_name", "altitude_masl", "locality",
+                                      "admin_region", "ecozone"] if c in c14_df.columns]
+        frames.append(c14_df[c14_site_cols].drop_duplicates())
+
     sites_raw = pd.concat(frames, ignore_index=True)
     sites = sites_raw.groupby("site_name").agg(first_notnull).reset_index()
     return sites
 
 
 C14_ADMIN_MAP = {
-    "Tarapaca": "Tarapacá",
+    "Tarapaca": "Tarapaca",
     "Arica":    "Arica y Parinacota",
 }
 
 
-def build_c14(path, outdir):
+def build_c14_mendez(path):
     df = pd.read_excel(path, sheet_name="Supl. 1", header=1)
-
     df.columns = df.columns.str.strip()
 
     df = df.rename(columns={
         "ID":               "record_id",
         "Region":           "admin_region",
-        "Basin":            "basin",
+        "Basin":            "locality",
         "Z":                "altitude_masl",
         "Altitudinal Belt": "altitudinal_belt",
         "Site":             "site_name",
@@ -242,9 +391,16 @@ def build_c14(path, outdir):
     df["admin_region"]  = df["admin_region"].map(C14_ADMIN_MAP).fillna(df["admin_region"])
     df["altitude_masl"] = pd.to_numeric(df["altitude_masl"], errors="coerce")
     df["ecozone"]       = df["altitude_masl"].apply(assign_ecozone)
-
-    df.to_csv(outdir / "arid_c14.csv", index=False)
-    print(f"  arid_c14.csv — {len(df)} filas, {len(df.columns)} columnas")
+    df["source_table"]  = "mendez_quiros_2023"
+    df["lab_id"]        = None
+    # Convertir c14_cal_from/to de cal BP a BCE/CE para consistencia con SAAID
+    for col in ["c14_cal_from", "c14_cal_to", "c14_cal_median"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = 1950 - df[col]
+    # Quitar columna redundante altitudinal_belt
+    df = df.drop(columns=["altitudinal_belt"], errors="ignore")
+    return df
 
 
 def main(input_path, outdir, c14_path=None):
@@ -255,31 +411,80 @@ def main(input_path, outdir, c14_path=None):
     tables = {}
     for sheet in ["Humans", "Animals", "Plants"]:
         raw = load_and_filter(input_path, sheet)
-        df = clean_table(raw)
+        df  = clean_table(raw)
         tables[sheet.lower()] = df
-        print(f"  {sheet}: {tables[sheet.lower()].shape}")
+        print(f"  {sheet}: {df.shape}")
 
+    # ── Extraer C14 de tablas de muestras ─────────────────────────────────────
+    print("\nExtrayendo fechados C14 de tablas de muestras...")
+    isotope_c14_frames = []
+    for name, df in tables.items():
+        c14_part = extract_c14(df, source_table=name)
+        if len(c14_part):
+            isotope_c14_frames.append(c14_part)
+            print(f"  {name}: {len(c14_part)} fechados")
+        # Marcar has_c14 y eliminar columnas C14 de la tabla de muestras
+        c14_detect = [c for c in ["c14_bp", "c14_lab_code"] if c in df.columns]
+        if c14_detect:
+            tables[name]["has_c14"] = df[c14_detect].notna().any(axis=1)
+        c14_to_drop = [c for c in C14_COLS if c in df.columns]
+        tables[name] = tables[name].drop(columns=c14_to_drop)
+
+    # ── Formato largo para humans y animals ───────────────────────────────────
+    print("\nAplicando formato largo...")
+    for name in ["humans", "animals"]:
+        if name in tables:
+            tables[name] = to_long(tables[name])
+            print(f"  {name}: {tables[name].shape}")
+
+    # ── Construir arid_c14 unificado ──────────────────────────────────────────
+    mendez_c14 = None
+    if c14_path:
+        print("\nCargando Mendez-Quiros C14...")
+        mendez_c14 = build_c14_mendez(Path(c14_path))
+        print(f"  mendez_quiros: {mendez_c14.shape}")
+
+    c14_frames = isotope_c14_frames + ([mendez_c14] if mendez_c14 is not None else [])
+    if c14_frames:
+        arid_c14 = pd.concat(c14_frames, ignore_index=True)
+        arid_c14 = arid_c14.drop(columns=["record_id"], errors="ignore")
+        arid_c14.insert(0, "record_id", range(1, len(arid_c14) + 1))
+    else:
+        arid_c14 = pd.DataFrame()
+
+    # ── arid_sites ─────────────────────────────────────────────────────────────
     print("\nConstruyendo arid_sites...")
-    sites = build_sites(tables)
+    sites = build_sites(tables, mendez_c14)
     print(f"  arid_sites: {sites.shape}")
 
-    print("\nGuardando CSVs...")
-    sites.to_csv(outdir / "arid_sites.csv", index=False)
-    for name, tbl in tables.items():
-        tbl.to_csv(outdir / f"arid_{name}.csv", index=False)
-        print(f"  arid_{name}.csv — {tbl.shape[0]} filas, {tbl.shape[1]} columnas")
+    # ── Aplicar remove_accents a todas las tablas ──────────────────────────────
+    print("\nEliminando tildes...")
+    for name in list(tables.keys()):
+        tables[name] = strip_accents_df(tables[name])
+    sites     = strip_accents_df(sites)
+    if not arid_c14.empty:
+        arid_c14 = strip_accents_df(arid_c14)
 
-    if c14_path:
-        print("\nConstruyendo arid_c14...")
-        build_c14(Path(c14_path), outdir)
+    # ── Guardar como .xlsx ─────────────────────────────────────────────────────
+    print("\nGuardando .xlsx...")
+    sites.to_excel(outdir / "arid_sites.xlsx", index=False)
+    print(f"  arid_sites.xlsx — {sites.shape[0]} filas, {sites.shape[1]} columnas")
+
+    for name, tbl in tables.items():
+        tbl.to_excel(outdir / f"arid_{name}.xlsx", index=False)
+        print(f"  arid_{name}.xlsx — {tbl.shape[0]} filas, {tbl.shape[1]} columnas")
+
+    if not arid_c14.empty:
+        arid_c14.to_excel(outdir / "arid_c14.xlsx", index=False)
+        print(f"  arid_c14.xlsx — {arid_c14.shape[0]} filas, {arid_c14.shape[1]} columnas")
 
     print("\nListo.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input",   required=True, help="Ruta al SAAID .xlsx")
-    parser.add_argument("--outdir",  default=".",   help="Directorio de salida")
-    parser.add_argument("--c14",     default=None,  help="Ruta al archivo Mendez-Quiros C14 .xlsx")
+    parser.add_argument("--input",  required=True, help="Ruta al SAAID .xlsx")
+    parser.add_argument("--outdir", default=".",   help="Directorio de salida")
+    parser.add_argument("--c14",    default=None,  help="Ruta al archivo Mendez-Quiros C14 .xlsx")
     args = parser.parse_args()
     main(args.input, args.outdir, args.c14)

@@ -5,56 +5,45 @@
 \alias{arid_humans}
 \title{Human isotopic data from the Atacama Desert}
 \format{
-A data frame with 1,821 rows and 48 columns:
+A data frame with 2,598 rows and 37 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
-\item{period_broad}{Broad period category (e.g. Archaic, Formative, Late) / Período general (p.ej. Arcaico, Formativo, Tardío)}
+\item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
+\item{period}{Sub-period or phase (e.g. Early Archaic, Late Formative) / Subperíodo o fase}
+\item{lab_id}{Laboratory identifier linking to \code{arid_c14} for radiocarbon dates / Identificador de laboratorio (vínculo con \code{arid_c14})}
+\item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período cultural (a.C./d.C.; negativo = a.C.)}
+\item{period_to}{End of cultural period (BCE/CE) / Fin del período cultural (a.C./d.C.)}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{period}{Sub-period or phase within the broad period (e.g. Early Formative, Late Formative) / Subperíodo o fase dentro del período general (p.ej. Formativo Temprano, Formativo Tardío)}
-\item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
-\item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
-\item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
-\item{c14_lab_code}{Laboratory code for the radiocarbon date / Código de laboratorio de la datación}
-\item{c14_bp}{Radiocarbon age in years BP / Edad radiocarbónica en años AP}
-\item{c14_error}{Standard error of the radiocarbon date / Error estándar de la datación}
-\item{c14_cal_from}{Lower bound of calibrated date range (cal BP) / Límite inferior del rango calibrado}
-\item{c14_cal_to}{Upper bound of calibrated date range (cal BP) / Límite superior del rango calibrado}
-\item{material_dated}{Material used for radiocarbon dating / Material utilizado para la datación}
-\item{lab_id}{Laboratory sample identifier / Identificador de muestra en laboratorio}
 \item{sex}{Biological sex (Male, Female, Indeterminate) / Sexo biológico}
-\item{age_category}{Broad age category (Adult, Subadult, etc.) / Categoría etaria amplia}
+\item{age_category}{Broad age category (Adult, Subadult, etc.) / Categoría etaria}
 \item{age_min}{Minimum estimated age in years / Edad mínima estimada en años}
 \item{age_max}{Maximum estimated age in years / Edad máxima estimada en años}
-\item{sample_type}{Type of sample (bone, hair, etc.) / Tipo de muestra}
-\item{tissue}{Tissue type for organic isotope measurements / Tipo de tejido para mediciones orgánicas}
-\item{element}{Skeletal element sampled / Elemento esquelético muestreado}
-\item{tissue_age}{Age of the tissue in cal BP / Edad del tejido en años calibrados AP}
+\item{sample_type}{Physical sample type (Bone, Hair, Tooth, etc.) / Tipo de muestra física}
+\item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
+\item{doi}{DOI of the original publication / DOI de la publicación original}
+\item{locality}{Site locality (e.g. Lower Azapa Valley) / Localidad del sitio}
+\item{admin_region}{Administrative region (Arica y Parinacota, Tarapaca, or Antofagasta) / Región administrativa}
+\item{ecozone}{Ecological zone based on altitude: Coast (<130 masl), Lowlands (130-1700 masl), Precordillera (1700-3700 masl), or Altiplano (>3700 masl) / Zona ecológica}
+\item{has_c14}{Whether a direct radiocarbon date exists in \code{arid_c14} for this sample / Si existe un fechado radiocarbónico en \code{arid_c14} para esta muestra}
+\item{tissue}{Tissue type analysed (e.g. Bone collagen, Hair keratin, Bone apatite) / Tejido analizado}
+\item{element}{Skeletal or anatomical element sampled / Elemento esquelético o anatómico muestreado}
+\item{tissue_age}{Estimated age of the tissue in cal BP / Edad estimada del tejido en cal AP}
 \item{tissue_age_min}{Minimum tissue age in cal BP / Edad mínima del tejido en cal AP}
 \item{tissue_age_max}{Maximum tissue age in cal BP / Edad máxima del tejido en cal AP}
-\item{yield_pct}{Collagen yield percentage / Rendimiento de colágeno en porcentaje}
-\item{wt_C}{Weight percent carbon in collagen / Porcentaje en peso de carbono en el colágeno}
-\item{wt_N}{Weight percent nitrogen in collagen / Porcentaje en peso de nitrógeno en el colágeno}
-\item{CN_ratio}{Atomic C:N ratio (collagen quality indicator) / Relación C:N atómica (indicador de calidad)}
-\item{d13C}{δ¹³C from organic tissue (‰ VPDB) / δ¹³C de tejido orgánico (‰ VPDB)}
-\item{d15N}{δ¹⁵N from organic tissue (‰ AIR) / δ¹⁵N de tejido orgánico (‰ AIR)}
-\item{wt_S}{Weight percent sulfur / Porcentaje en peso de azufre}
-\item{d34S}{δ³⁴S (‰ VCDT)}
-\item{tissue_carbonate}{Tissue type for carbonate measurements / Tipo de tejido para mediciones de carbonato}
-\item{element_carbonate}{Skeletal element for carbonate sampling / Elemento esquelético para carbonato}
-\item{tissue_age_carbonate}{Age of carbonate tissue in cal BP / Edad del tejido de carbonato en cal AP}
-\item{tissue_age_carbonate_min}{Minimum carbonate tissue age in cal BP / Edad mínima del tejido de carbonato}
-\item{tissue_age_carbonate_max}{Maximum carbonate tissue age in cal BP / Edad máxima del tejido de carbonato}
-\item{d13C_carbonate}{δ¹³C from bone/enamel apatite (‰ VPDB) / δ¹³C de apatita ósea/dental (‰ VPDB)}
-\item{d18O_carbonate}{δ¹⁸O from bone/enamel apatite (‰ VPDB) / δ¹⁸O de apatita ósea/dental (‰ VPDB)}
-\item{Sr87_Sr86}{⁸⁷Sr/⁸⁶Sr strontium isotope ratio / Relación isotópica de estroncio ⁸⁷Sr/⁸⁶Sr}
-\item{reference_short}{Short citation for the data source / Referencia bibliográfica abreviada}
-\item{doi}{DOI linking to the original publication / DOI de la publicación original}
-\item{locality}{Site locality (e.g. Lower Azapa Valley) / Localidad del sitio}
-\item{admin_region}{Administrative region / Región administrativa}
-\item{ecozone}{Ecological zone: Coast, Lowlands, Precordillera, or Altiplano / Zona ecológica}
+\item{yield_pct}{Collagen yield percentage (organic rows only) / Rendimiento de colágeno en porcentaje (solo filas orgánicas)}
+\item{wt_C}{Weight percent carbon (organic rows only) / Porcentaje en peso de carbono}
+\item{wt_N}{Weight percent nitrogen (organic rows only) / Porcentaje en peso de nitrógeno}
+\item{CN_ratio}{Atomic C:N ratio — collagen quality indicator (organic rows only) / Relación C:N atómica}
+\item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
+\item{d15N}{delta-15N from organic tissue (per mille AIR; organic rows only) / delta-15N de tejido organico (por mil AIR)}
+\item{wt_S}{Weight percent sulfur (organic rows only) / Porcentaje en peso de azufre}
+\item{d34S}{delta-34S (per mille VCDT; organic rows only) / delta-34S (por mil VCDT)}
+\item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio (organic rows only) / Relacion isotopica de estroncio 87Sr/86Sr}
+\item{tissue_type}{"organic" or "carbonate" — identifies which tissue block each row represents / "organic" o "carbonate"}
+\item{d18O}{delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) / delta-18O de tejido carbonato (por mil VPDB)}
 }
 }
 \source{
@@ -66,10 +55,17 @@ arid_humans
 \description{
 Stable isotope measurements from human skeletal and soft tissue samples
 recovered at archaeological sites in northern Chile (Arica y Parinacota,
-Tarapacá, and Antofagasta regions).
+Tarapaca, and Antofagasta regions). Stored in long format: one row per
+tissue analysed. Individuals with both organic and carbonate measurements
+appear in two rows distinguished by the \code{tissue_type} column.
+Radiocarbon dates are stored separately in \code{arid_c14} (linked via \code{lab_id}).
 
-Mediciones de isótopos estables de muestras de tejido esquelético y blando
-humano provenientes de sitios arqueológicos del norte de Chile (regiones de
-Arica y Parinacota, Tarapacá y Antofagasta).
+Mediciones de isotópos estables de muestras de tejido esquelético y blando
+humano de sitios arqueológicos del norte de Chile. Formato largo: una fila
+por tejido analizado. Los fechados radiocarbónicos se almacenan en \code{arid_c14}
+(vinculados mediante \code{lab_id}).
+}
+\seealso{
+\link{arid_c14} for radiocarbon dates; \code{\link[=arid_chronology]{arid_chronology()}} to assign dates.
 }
 \keyword{datasets}

@@ -5,48 +5,41 @@
 \alias{arid_animals}
 \title{Faunal isotopic data from the Atacama Desert}
 \format{
-A data frame with 362 rows and 40 columns:
+A data frame with 424 rows and 33 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{period}{Broad cultural or chronological period / Período cultural o cronológico amplio}
-\item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
-\item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
-\item{c14_method}{Radiocarbon dating method / Método de datación radiocarbónica}
-\item{c14_lab_code}{Laboratory code for the radiocarbon date / Código de laboratorio}
-\item{c14_bp}{Radiocarbon age in years BP / Edad radiocarbónica en años AP}
-\item{c14_error}{Standard error of the radiocarbon date / Error estándar de la datación}
-\item{c14_cal_from}{Lower bound of calibrated date range (cal BP) / Límite inferior del rango calibrado}
-\item{c14_cal_to}{Upper bound of calibrated date range (cal BP) / Límite superior del rango calibrado}
-\item{material_dated}{Material used for radiocarbon dating / Material utilizado para la datación}
-\item{lab_id}{Laboratory sample identifier / Identificador de muestra en laboratorio}
-\item{type_source}{Whether the animal is wild or domestic / Si el animal es silvestre o doméstico}
+\item{period}{Sub-period or phase / Subperíodo o fase}
+\item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período (a.C./d.C.)}
+\item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
+\item{lab_id}{Laboratory identifier linking to \code{arid_c14} / Identificador de laboratorio}
+\item{type_source}{Wild or domestic / Silvestre o doméstico}
 \item{taxon_local}{Local common name of the taxon / Nombre local del taxón}
-\item{genus_species}{Scientific name (genus and species) / Nombre científico (género y especie)}
-\item{sample_type}{Type of sample / Tipo de muestra}
-\item{tissue}{Tissue type for organic isotope measurements / Tipo de tejido para mediciones orgánicas}
-\item{element}{Skeletal element sampled / Elemento esquelético muestreado}
-\item{yield_pct}{Collagen yield percentage / Rendimiento de colágeno en porcentaje}
+\item{genus_species}{Scientific name (genus and species) / Nombre científico}
+\item{sample_type}{Physical sample type (Bone, Fur, Feather, etc.) / Tipo de muestra física}
+\item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
+\item{doi}{DOI of the original publication / DOI de la publicación original}
+\item{locality}{Site locality / Localidad del sitio}
+\item{admin_region}{Administrative region / Región administrativa}
+\item{ecozone}{Ecological zone / Zona ecológica}
+\item{period_broad}{Broad period category / Período general}
+\item{has_c14}{Whether a direct radiocarbon date exists in \code{arid_c14} / Si existe fechado radiocarbónico en \code{arid_c14}}
+\item{tissue}{Tissue type analysed / Tejido analizado}
+\item{element}{Skeletal or anatomical element sampled / Elemento muestreado}
+\item{yield_pct}{Collagen yield percentage (organic rows only) / Rendimiento de colágeno}
 \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-\item{d13C}{δ¹³C from organic tissue (‰ VPDB) / δ¹³C de tejido orgánico (‰ VPDB)}
-\item{d15N}{δ¹⁵N from organic tissue (‰ AIR) / δ¹⁵N de tejido orgánico (‰ AIR)}
+\item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
+\item{d15N}{delta-15N from organic tissue (per mille AIR) / delta-15N de tejido orgánico}
 \item{wt_S}{Weight percent sulfur / Porcentaje en peso de azufre}
-\item{d34S}{δ³⁴S (‰ VCDT)}
-\item{tissue_carbonate}{Tissue type for carbonate measurements / Tipo de tejido para carbonato}
-\item{element_carbonate}{Skeletal element for carbonate sampling / Elemento para carbonato}
-\item{d13C_carbonate}{δ¹³C from bone/enamel apatite (‰ VPDB) / δ¹³C de apatita ósea/dental}
-\item{d18O_carbonate}{δ¹⁸O from bone/enamel apatite (‰ VPDB) / δ¹⁸O de apatita ósea/dental}
-\item{Sr87_Sr86}{⁸⁷Sr/⁸⁶Sr strontium isotope ratio / Relación isotópica de estroncio}
-\item{reference_short}{Short citation for the data source / Referencia bibliográfica abreviada}
-\item{doi}{DOI linking to the original publication / DOI de la publicación original}
-\item{locality}{Site locality / Localidad del sitio}
-\item{admin_region}{Administrative region / Región administrativa}
-\item{ecozone}{Ecological zone: Coast, Lowlands, Precordillera, or Altiplano / Zona ecológica}
+\item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+\item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
+\item{tissue_type}{"organic" or "carbonate" / "organic" o "carbonate"}
+\item{d18O}{delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) / delta-18O de tejido carbonato}
 }
 }
 \source{
@@ -56,10 +49,16 @@ ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmi
 arid_animals
 }
 \description{
-Stable isotope measurements from animal remains (bone, tooth, hair, feather,
-and other tissues) recovered at archaeological sites in northern Chile.
+Stable isotope measurements from animal remains recovered at archaeological
+sites in northern Chile. Stored in long format: one row per tissue analysed.
+Individuals with both organic (collagen/keratin) and carbonate (apatite)
+measurements appear in two rows. Radiocarbon dates are in \code{arid_c14}.
 
-Mediciones de isótopos estables de restos faunísticos (hueso, diente, pelo,
-pluma y otros tejidos) provenientes de sitios arqueológicos del norte de Chile.
+Mediciones de isótopos estables de restos faunísticos de sitios arqueológicos
+del norte de Chile. Formato largo: una fila por tejido analizado. Los fechados
+radiocarbónicos se almacenan en \code{arid_c14}.
+}
+\seealso{
+\link{arid_c14} for radiocarbon dates; \code{\link[=arid_chronology]{arid_chronology()}} to assign dates.
 }
 \keyword{datasets}

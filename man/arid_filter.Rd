@@ -9,8 +9,8 @@ arid_filter(
   ecozone = NULL,
   admin_region = NULL,
   period = NULL,
-  locality = NULL,
-  long = FALSE
+  period_broad = NULL,
+  locality = NULL
 )
 }
 \arguments{
@@ -21,16 +21,16 @@ arid_filter(
 \code{"Coast"}, \code{"Lowlands"}, \code{"Precordillera"}, \code{"Altiplano"}.}
 
 \item{admin_region}{Character vector. One or more administrative regions:
-\code{"Arica y Parinacota"}, \code{"Tarapacá"}, \code{"Antofagasta"}.}
+\code{"Arica y Parinacota"}, \code{"Tarapaca"}, \code{"Antofagasta"}.}
 
-\item{period}{Character vector. One or more chronological periods
-(e.g. \code{"Early Archaic (Northern Chile)"}).}
+\item{period}{Character vector. One or more sub-periods
+(e.g. \code{"Early Archaic"}, \code{"Late Formative"}).}
+
+\item{period_broad}{Character vector. One or more broad period categories
+(e.g. \code{"Archaic"}, \code{"Formative"}, \code{"Late Intermediate"}, \code{"Late"}).}
 
 \item{locality}{Character vector. One or more localities
 (e.g. \code{"Lower Azapa Valley"}).}
-
-\item{long}{Logical. If \code{TRUE}, reshapes isotope columns to long format.
-Passed directly to \code{arid_merge()}. Default is \code{FALSE}.}
 }
 \value{
 A filtered data frame.
@@ -53,10 +53,14 @@ arid_filter(tables = "humans", ecozone = "Altiplano")
 # Multiple ecozones and an administrative region
 arid_filter(ecozone = c("Coast", "Lowlands"), admin_region = "Antofagasta")
 
-# Specific period in long format
-arid_filter(period = "Early Archaic (Northern Chile)", long = TRUE)
+# Broad period filter
+arid_filter(period_broad = "Formative")
+
+# Specific sub-period
+arid_filter(period = "Early Archaic")
 
 }
 \seealso{
-\code{\link[=arid_merge]{arid_merge()}} for the underlying combine function.
+\code{\link[=arid_merge]{arid_merge()}} for the underlying combine function;
+\code{\link[=arid_chronology]{arid_chronology()}} to assign dates to the result.
 }

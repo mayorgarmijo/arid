@@ -29,7 +29,13 @@ test_that("arid_filter tables argument is respected", {
   expect_false("source" %in% colnames(result))
 })
 
-test_that("arid_filter with long = TRUE adds tissue_block", {
-  result <- arid_filter(tables = "humans", ecozone = "Coast", long = TRUE)
-  expect_true("tissue_block" %in% colnames(result))
+test_that("arid_filter period_broad filter works", {
+  result <- arid_filter(tables = "humans", period_broad = "Formative")
+  expect_true(all(result$period_broad == "Formative"))
+  expect_gt(nrow(result), 0)
+})
+
+test_that("arid_filter period filter works", {
+  result <- arid_filter(tables = "humans", period = "Early Archaic")
+  expect_true(all(result$period == "Early Archaic"))
 })
