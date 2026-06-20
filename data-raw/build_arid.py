@@ -216,7 +216,15 @@ C14_COLS = ["c14_method", "c14_lab_code", "c14_bp", "c14_error",
 SITE_COLS = [
     "site_name", "lat", "lon", "altitude_masl",
     "locality", "admin_region", "ecozone",
-    "period", "period_from", "period_to",
+    "period", "period_broad", "period_from", "period_to",
+]
+
+# ── Columnas que se conservan en arid_c14 ─────────────────────────────────────
+C14_KEEP = [
+    "lab_id", "sample_id", "site_name", "locality", "admin_region",
+    "ecozone", "altitude_masl", "reference_short", "c14_method",
+    "c14_lab_code", "c14_bp", "c14_error", "c14_cal_from", "c14_cal_to",
+    "material", "source_table", "d13C_ams",
 ]
 
 # Mapeo renombre para reshaping a largo (carbonate src → dst)
@@ -391,15 +399,18 @@ def build_c14_mendez(path):
     df["admin_region"]  = df["admin_region"].map(C14_ADMIN_MAP).fillna(df["admin_region"])
     df["altitude_masl"] = pd.to_numeric(df["altitude_masl"], errors="coerce")
     df["ecozone"]       = df["altitude_masl"].apply(assign_ecozone)
-    df["source_table"]  = "mendez_quiros_2023"
+    df["source_table"]  = "context"
     df["lab_id"]        = None
     # Convertir c14_cal_from/to de cal BP a BCE/CE para consistencia con SAAID
     for col in ["c14_cal_from", "c14_cal_to", "c14_cal_median"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
             df[col] = 1950 - df[col]
-    # Quitar columna redundante altitudinal_belt
-    df = df.drop(columns=["altitudinal_belt"], errors="ignore")
+    # Quitar columnas no necesarias
+    drop_cols = ["altitudinal_belt", "unit", "sub_unit", "material_detail",
+                 "context_domestic", "context_funerary", "context_agriculture",
+                 "context_other", "c14_cal_median"]
+    df = df.drop(columns=drop_cols, errors="ignore")
     return df
 
 
@@ -447,8 +458,7 @@ def main(input_path, outdir, c14_path=None):
     c14_frames = isotope_c14_frames + ([mendez_c14] if mendez_c14 is not None else [])
     if c14_frames:
         arid_c14 = pd.concat(c14_frames, ignore_index=True)
-        arid_c14 = arid_c14.drop(columns=["record_id"], errors="ignore")
-        arid_c14.insert(0, "record_id", range(1, len(arid_c14) + 1))
+        arid_c14 = arid_c14[[c for c in C14_KEEP if c in arid_c14.columns]]
     else:
         arid_c14 = pd.DataFrame()
 
@@ -467,15 +477,15 @@ def main(input_path, outdir, c14_path=None):
 
     # ── Guardar como .xlsx ─────────────────────────────────────────────────────
     print("\nGuardando .xlsx...")
-    sites.to_excel(outdir / "arid_sites.xlsx", index=False)
+    sites.to_excel(outdir / "arid_sites.xlsx", index=False, engine="xlsxwriter")
     print(f"  arid_sites.xlsx — {sites.shape[0]} filas, {sites.shape[1]} columnas")
 
     for name, tbl in tables.items():
-        tbl.to_excel(outdir / f"arid_{name}.xlsx", index=False)
+        tbl.to_excel(outdir / f"arid_{name}.xlsx", index=False, engine="xlsxwriter")
         print(f"  arid_{name}.xlsx — {tbl.shape[0]} filas, {tbl.shape[1]} columnas")
 
     if not arid_c14.empty:
-        arid_c14.to_excel(outdir / "arid_c14.xlsx", index=False)
+        arid_c14.to_excel(outdir / "arid_c14.xlsx", index=False, engine="xlsxwriter")
         print(f"  arid_c14.xlsx — {arid_c14.shape[0]} filas, {arid_c14.shape[1]} columnas")
 
     print("\nListo.")

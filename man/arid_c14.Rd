@@ -5,9 +5,8 @@
 \alias{arid_c14}
 \title{Radiocarbon dates from the Atacama Desert}
 \format{
-A data frame with 1,127 rows and 26 columns:
+A data frame with 1,127 rows and 17 columns:
 \describe{
-\item{record_id}{Sequential record identifier / Identificador secuencial}
 \item{lab_id}{Laboratory identifier of the isotopic sample (NA for context-level dates) / Identificador del laboratorio isotópico (NA para fechados de contexto)}
 \item{sample_id}{Sample identifier of the isotopic sample (NA for context-level dates) / Identificador de la muestra isotópica}
 \item{site_name}{Archaeological site name / Nombre del sitio arqueológico}
@@ -19,20 +18,12 @@ A data frame with 1,127 rows and 26 columns:
 \item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
 \item{c14_lab_code}{Radiocarbon laboratory code / Código de laboratorio de radiocarbono}
 \item{c14_bp}{Conventional radiocarbon age (years BP) / Edad radiocarbónica convencional (años AP)}
-\item{c14_error}{Measurement error (plus or minus 1 sigma) / Error de medición (mas o menos 1 sigma)}
-\item{c14_cal_from}{Calibrated age range start (BCE/CE; negative = BCE) / Inicio del rango calibrado (a.C./d.C.; negativo = a.C.)}
-\item{c14_cal_to}{Calibrated age range end (BCE/CE) / Fin del rango calibrado (a.C./d.C.)}
+\item{c14_error}{Measurement error (±1σ) / Error de medición (±1σ)}
+\item{c14_cal_from}{Calibrated age range start, 2σ 95\% (BCE/CE; negative = BCE) / Inicio del rango calibrado 2σ 95\% (a.C./d.C.; negativo = a.C.)}
+\item{c14_cal_to}{Calibrated age range end, 2σ 95\% (BCE/CE) / Fin del rango calibrado 2σ 95\% (a.C./d.C.)}
 \item{material}{Material category dated / Categoría del material fechado}
-\item{source_table}{Origin of the record: "humans", "animals", "plants", or "mendez_quiros_2023" / Origen del registro}
-\item{unit}{Excavation unit (context-level dates only) / Unidad de excavación}
-\item{sub_unit}{Sub-unit (context-level dates only) / Sub-unidad}
-\item{material_detail}{Detailed material description (context-level dates only) / Descripción detallada del material}
-\item{d13C_ams}{delta-13C for AMS fractionation correction (per mille VPDB) — not for dietary analysis / delta-13C para corrección AMS — no para análisis dietético}
-\item{context_domestic}{Domestic context flag (X = yes; context-level dates only) / Contexto doméstico}
-\item{context_funerary}{Funerary context flag (X = yes; context-level dates only) / Contexto funerario}
-\item{context_agriculture}{Agricultural context flag (X = yes; context-level dates only) / Contexto agrícola}
-\item{context_other}{Other context flag (X = yes; context-level dates only) / Otro contexto}
-\item{c14_cal_median}{Median calibrated age (BCE/CE; context-level dates only) / Mediana de la edad calibrada (a.C./d.C.)}
+\item{source_table}{Origin of the record: "humans", "animals", "plants", or "context" / Origen del registro}
+\item{d13C_ams}{δ¹³C for AMS fractionation correction (per mille VPDB) — not for dietary analysis / δ¹³C para corrección AMS — no para análisis dietético}
 }
 }
 \source{

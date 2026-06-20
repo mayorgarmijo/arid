@@ -37,11 +37,11 @@ subset(arid_humans, tissue_type == "carbonate")
 
 | Variable | Description |
 |---|---|
-| `d13C` | delta-13C from organic or carbonate tissue (per mille VPDB) |
-| `d15N` | delta-15N from organic tissue (per mille AIR) |
-| `d34S` | delta-34S (per mille VCDT) |
-| `d18O` | delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) |
-| `Sr87_Sr86` | 87Sr/86Sr ratio |
+| `d13C` | δ¹³C from organic or carbonate tissue (per mille VPDB) |
+| `d15N` | δ¹⁵N from organic tissue (per mille AIR) |
+| `d34S` | δ³⁴S (per mille VCDT) |
+| `d18O` | δ¹⁸O from carbonate tissue (per mille VPDB; carbonate rows only) |
+| `Sr87_Sr86` | ⁸⁷Sr/⁸⁶Sr ratio |
 | `wt_C`, `wt_N`, `CN_ratio` | Collagen quality indicators |
 | `tissue` | Tissue type (e.g. Bone collagen, Hair keratin, Bone apatite) |
 | `tissue_type` | "organic" or "carbonate" |

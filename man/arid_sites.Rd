@@ -5,7 +5,7 @@
 \alias{arid_sites}
 \title{Archaeological site information for the Atacama Desert}
 \format{
-A data frame with 422 rows and 10 columns:
+A data frame with 422 rows and 11 columns:
 \describe{
 \item{site_name}{Archaeological site identifier (primary key) / Identificador del sitio (clave primaria)}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
@@ -15,6 +15,7 @@ A data frame with 422 rows and 10 columns:
 \item{admin_region}{Administrative region / Región administrativa}
 \item{ecozone}{Ecological zone: Coast, Lowlands, Precordillera, or Altiplano / Zona ecológica}
 \item{period}{Sub-period or phase / Subperíodo o fase}
+\item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
 \item{period_from}{Start of cultural period (BCE/CE) / Inicio del período (a.C./d.C.)}
 \item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
 }
