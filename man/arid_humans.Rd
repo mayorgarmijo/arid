@@ -8,12 +8,12 @@
 A data frame with 1,821 rows and 48 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
-\item{period_broad}{Simplified period grouping (e.g. Archaic, Formative, Late) / Agrupación de período simplificada}
+\item{period_broad}{Broad period category (e.g. Archaic, Formative, Late) / Período general (p.ej. Arcaico, Formativo, Tardío)}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{period}{Detailed cultural or chronological period / Período cultural o cronológico detallado}
+\item{period}{Sub-period or phase within the broad period (e.g. Early Formative, Late Formative) / Subperíodo o fase dentro del período general (p.ej. Formativo Temprano, Formativo Tardío)}
 \item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
 \item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
 \item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
