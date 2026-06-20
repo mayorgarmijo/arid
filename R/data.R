@@ -45,13 +45,13 @@
 #'   \item{wt_C}{Weight percent carbon (organic rows only) / Porcentaje en peso de carbono}
 #'   \item{wt_N}{Weight percent nitrogen (organic rows only) / Porcentaje en peso de nitrógeno}
 #'   \item{CN_ratio}{Atomic C:N ratio — collagen quality indicator (organic rows only) / Relación C:N atómica}
-#'   \item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
-#'   \item{d15N}{delta-15N from organic tissue (per mille AIR; organic rows only) / delta-15N de tejido organico (por mil AIR)}
+#'   \item{d13C}{delta-13C (‰ VPDB) / delta-13C (por mil VPDB)}
+#'   \item{d15N}{delta-15N from organic tissue (‰ AIR; organic rows only) / delta-15N de tejido organico (por mil AIR)}
 #'   \item{wt_S}{Weight percent sulfur (organic rows only) / Porcentaje en peso de azufre}
-#'   \item{d34S}{delta-34S (per mille VCDT; organic rows only) / delta-34S (por mil VCDT)}
+#'   \item{d34S}{delta-34S (‰ VCDT; organic rows only) / delta-34S (por mil VCDT)}
 #'   \item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio (organic rows only) / Relacion isotopica de estroncio 87Sr/86Sr}
 #'   \item{tissue_type}{"organic" or "carbonate" — identifies which tissue block each row represents / "organic" o "carbonate"}
-#'   \item{d18O}{delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) / delta-18O de tejido carbonato (por mil VPDB)}
+#'   \item{d18O}{delta-18O from carbonate tissue (‰ VPDB; carbonate rows only) / delta-18O de tejido carbonato (por mil VPDB)}
 #' }
 #'
 #' @seealso [arid_c14] for radiocarbon dates; [arid_chronology()] to assign dates.
@@ -99,13 +99,13 @@
 #'   \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 #'   \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 #'   \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-#'   \item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
-#'   \item{d15N}{delta-15N from organic tissue (per mille AIR) / delta-15N de tejido orgánico}
+#'   \item{d13C}{delta-13C (‰ VPDB) / delta-13C (por mil VPDB)}
+#'   \item{d15N}{delta-15N from organic tissue (‰ AIR) / delta-15N de tejido orgánico}
 #'   \item{wt_S}{Weight percent sulfur / Porcentaje en peso de azufre}
-#'   \item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+#'   \item{d34S}{delta-34S (‰ VCDT) / delta-34S (por mil VCDT)}
 #'   \item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
 #'   \item{tissue_type}{"organic" or "carbonate" / "organic" o "carbonate"}
-#'   \item{d18O}{delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) / delta-18O de tejido carbonato}
+#'   \item{d18O}{delta-18O from carbonate tissue (‰ VPDB; carbonate rows only) / delta-18O de tejido carbonato}
 #' }
 #'
 #' @seealso [arid_c14] for radiocarbon dates; [arid_chronology()] to assign dates.
@@ -143,9 +143,9 @@
 #'   \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 #'   \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 #'   \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-#'   \item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
-#'   \item{d15N}{delta-15N (per mille AIR) / delta-15N (por mil AIR)}
-#'   \item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+#'   \item{d13C}{delta-13C (‰ VPDB) / delta-13C (por mil VPDB)}
+#'   \item{d15N}{delta-15N (‰ AIR) / delta-15N (por mil AIR)}
+#'   \item{d34S}{delta-34S (‰ VCDT) / delta-34S (por mil VCDT)}
 #'   \item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
 #'   \item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
 #'   \item{doi}{DOI of the original publication / DOI de la publicación original}
@@ -225,7 +225,7 @@
 #'   \item{c14_cal_to}{Calibrated age range end, 2σ 95% (BCE/CE) / Fin del rango calibrado 2σ 95% (a.C./d.C.)}
 #'   \item{material}{Material category dated / Categoría del material fechado}
 #'   \item{source_table}{Origin of the record: "humans", "animals", "plants", or "context" / Origen del registro}
-#'   \item{d13C_ams}{δ¹³C for AMS fractionation correction (per mille VPDB) — not for dietary analysis / δ¹³C para corrección AMS — no para análisis dietético}
+#'   \item{d13C_ams}{δ¹³C for AMS fractionation correction (‰ VPDB) — not for dietary analysis / δ¹³C para corrección AMS — no para análisis dietético}
 #' }
 #'
 #' @seealso [arid_chronology()] to assign dates to isotopic samples.

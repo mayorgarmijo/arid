@@ -37,10 +37,10 @@ subset(arid_humans, tissue_type == "carbonate")
 
 | Variable | Description |
 |---|---|
-| `d13C` | δ¹³C from organic or carbonate tissue (per mille VPDB) |
-| `d15N` | δ¹⁵N from organic tissue (per mille AIR) |
-| `d34S` | δ³⁴S (per mille VCDT) |
-| `d18O` | δ¹⁸O from carbonate tissue (per mille VPDB; carbonate rows only) |
+| `d13C` | δ¹³C from organic or carbonate tissue (‰ VPDB) |
+| `d15N` | δ¹⁵N from organic tissue (‰ AIR) |
+| `d34S` | δ³⁴S (‰ VCDT) |
+| `d18O` | δ¹⁸O from carbonate tissue (‰ VPDB; carbonate rows only) |
 | `Sr87_Sr86` | ⁸⁷Sr/⁸⁶Sr ratio |
 | `wt_C`, `wt_N`, `CN_ratio` | Collagen quality indicators |
 | `tissue` | Tissue type (e.g. Bone collagen, Hair keratin, Bone apatite) |
@@ -60,52 +60,27 @@ All date values in ARID use the **BCE/CE** system (negative = BCE, positive = CE
 
 ## Geographic coverage
 
-ARID currently includes samples from 422 archaeological sites across three administrative regions of northern Chile. Samples are classified by:
+ARID currently includes samples from 422 archaeological sites across three administrative regions of northern Chile.
+
+![](man/figures/map_overview.png)
+
+Samples are classified by:
 
 - **`admin_region`**: Arica y Parinacota · Tarapaca · Antofagasta
 - **`ecozone`**: Coast (< 130 masl) · Lowlands (130–1700 masl) · Precordillera (1700–3700 masl) · Altiplano (> 3700 masl)
 - **`locality`**: Specific site locality (e.g. Lower Azapa Valley, Loa basin, San Pedro de Atacama Oasis)
 
-## Usage
+## Functions
+
+ARID provides three functions for accessing and working with the data.
+
+### `arid_merge()`
+
+Combines one or more sample tables into a single data frame. Each table already contains site-level context columns. When more than one table is selected, a `source` column is added to identify the origin of each row.
 
 ```r
 library(ARID)
 
-# Access datasets directly
-head(arid_humans)
-head(arid_c14)
-
-# Combine tables
-all_samples <- arid_merge()
-humans      <- arid_merge("humans")
-
-# Filter by ecozone
-coastal <- arid_filter(tables = "humans", ecozone = "Coast")
-
-# Filter by broad period
-formative <- arid_filter(period_broad = "Formative")
-
-# Filter by sub-period
-early_archaic <- arid_filter(period = "Early Archaic")
-
-# Filter by administrative region
-antofagasta <- arid_filter(tables = "humans", admin_region = "Antofagasta")
-
-# Combine filters (AND logic)
-coastal_formative <- arid_filter(tables = "humans", ecozone = "Coast",
-                                 period_broad = "Formative")
-
-# Filter further with dplyr (e.g. only collagen)
-library(dplyr)
-collagen_only <- arid_filter(ecozone = "Coast") |>
-  filter(grepl("collagen", tissue, ignore.case = TRUE))
-```
-
-## The `arid_merge()` function
-
-`arid_merge()` combines one or more sample tables into a single data frame. Each table already contains site-level context and is stored in long format. When more than one table is selected, a `source` column identifies the origin of each row.
-
-```r
 # Single table
 arid_merge("humans")
 arid_merge("animals")
@@ -117,17 +92,27 @@ arid_merge()  # all three tables
 
 # Select tissue type after merging
 subset(arid_merge("humans"), tissue_type == "organic")
+subset(arid_merge("humans"), tissue_type == "carbonate")
 ```
 
-## The `arid_filter()` function
+### `arid_filter()`
 
-`arid_filter()` wraps `arid_merge()` and applies contextual filters in a single call. At least one filter argument must be provided. All arguments accept character vectors for multi-value filtering (OR logic within each argument, AND logic across arguments).
+Wraps `arid_merge()` and applies contextual filters in one call. At least one filter argument must be provided. All arguments accept character vectors (OR logic within each argument, AND logic across arguments).
+
+| Argument | Values |
+|---|---|
+| `tables` | `"humans"`, `"animals"`, `"plants"` (default: all three) |
+| `ecozone` | `"Coast"`, `"Lowlands"`, `"Precordillera"`, `"Altiplano"` |
+| `admin_region` | `"Arica y Parinacota"`, `"Tarapaca"`, `"Antofagasta"` |
+| `period_broad` | `"Archaic"`, `"Formative"`, `"Late Intermediate"`, `"Late"`, `"Colonial"`, … |
+| `period` | `"Early Archaic"`, `"Late Formative"`, … |
+| `locality` | e.g. `"Lower Azapa Valley"`, `"San Pedro de Atacama Oasis"` |
 
 ```r
 # Filter by ecozone
 arid_filter(ecozone = "Altiplano")
 
-# Multiple ecozones at once
+# Multiple ecozones at once (OR logic)
 arid_filter(ecozone = c("Coast", "Lowlands"))
 
 # Filter by broad period
@@ -136,27 +121,56 @@ arid_filter(period_broad = "Formative")
 # Filter by specific sub-period
 arid_filter(period = "Late Formative")
 
-# Combine filters (AND logic)
+# Combine filters (AND logic across arguments)
 arid_filter(tables = "humans", ecozone = "Altiplano", admin_region = "Antofagasta")
 
 # By locality
 arid_filter(locality = "Lower Azapa Valley")
+
+# Chain with dplyr for tissue-specific subsets
+library(dplyr)
+arid_filter(ecozone = "Coast", period_broad = "Formative") |>
+  filter(tissue_type == "organic")
 ```
 
-## The `arid_chronology()` function
+### `arid_chronology()`
 
-`arid_chronology()` assigns date ranges to samples. For samples with a direct radiocarbon date, the calibrated range from `arid_c14` is used (linked via `lab_id`). For the rest, the cultural period range is used as a fallback. Results include `date_from`, `date_to`, and `date_source` ("C14" or "period").
+Assigns individual date ranges to samples. For samples with a direct radiocarbon date (`has_c14 == TRUE`), the calibrated range from `arid_c14` is used (linked via `lab_id`). For all other samples, the cultural period range (`period_from` / `period_to`) is used as a fallback. Three columns are added: `date_from`, `date_to`, and `date_source` (`"C14"` or `"period"`).
+
+All internal dates are in BCE/CE. The `unit` argument converts them to cal BP on output.
 
 ```r
-# Assign dates in BCE/CE (default)
-df <- arid_merge("humans")
-df <- arid_chronology(df)
+# Assign dates in BCE/CE (default; negative = BCE)
+df <- arid_chronology(arid_merge("humans"))
+head(df[, c("sample_id", "date_from", "date_to", "date_source")])
 
 # In cal BP
 df_bp <- arid_chronology(arid_merge("humans"), unit = "BP")
 
-# Check which samples have direct C14 dates
+# Check how many samples have direct C14 dates vs. period estimates
 table(df$date_source)
+
+# Combine with arid_filter
+coastal_archaic <- arid_filter(ecozone = "Coast", period_broad = "Archaic")
+coastal_archaic <- arid_chronology(coastal_archaic)
+```
+
+## Quick start
+
+```r
+library(ARID)
+
+# Explore a dataset
+head(arid_humans)
+head(arid_c14)
+
+# All organic tissue rows for coastal humans
+arid_filter(tables = "humans", ecozone = "Coast") |>
+  subset(tissue_type == "organic")
+
+# Assign chronology and filter samples with direct C14 dates
+df <- arid_chronology(arid_merge("humans"))
+subset(df, date_source == "C14")
 ```
 
 ## Citation
