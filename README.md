@@ -18,7 +18,8 @@ ARID includes four datasets:
 | `arid_humans` | Isotopic data from human skeletal and soft tissue samples | 1,821 |
 | `arid_animals` | Isotopic data from faunal remains | 362 |
 | `arid_plants` | Isotopic data from botanical remains | 576 |
-| `arid_sites` | Archaeological site information with geographic and chronological context | 203 |
+| `arid_sites` | Archaeological site information with geographic and chronological context | 195 |
+| `arid_c14` | Radiocarbon dates from archaeological contexts (Méndez-Quiros et al. 2023) | 1,003 |
 
 
 ### Key isotopic variables

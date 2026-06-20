@@ -9,14 +9,15 @@
 #' humano provenientes de sitios arqueológicos del norte de Chile (regiones de
 #' Arica y Parinacota, Tarapacá y Antofagasta).
 #'
-#' @format A data frame with 1,821 rows and 47 columns:
+#' @format A data frame with 1,821 rows and 48 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
+#'   \item{period_broad}{Simplified period grouping (e.g. Archaic, Formative, Late) / Agrupación de período simplificada}
 #'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 #'   \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 #'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-#'   \item{period}{Broad cultural or chronological period / Período cultural o cronológico amplio}
+#'   \item{period}{Detailed cultural or chronological period / Período cultural o cronológico detallado}
 #'   \item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
 #'   \item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
 #'   \item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
@@ -200,3 +201,50 @@
 #'
 #' @source ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmijo/arid}
 "arid_sites"
+
+#' Radiocarbon dates from the Atacama Desert
+#'
+#' @description
+#' A compilation of 1,003 radiocarbon dates from archaeological contexts in the
+#' Tarapacá and Arica y Parinacota regions of northern Chile, derived from the
+#' supplementary material of Méndez-Quiros et al. (2023). Includes contextual
+#' information (site, unit, material, context type) and calibrated age ranges.
+#' The \code{d13C_ams} column contains δ¹³C values used for AMS correction, not
+#' for dietary isotopic analysis.
+#'
+#' Compilación de 1,003 fechados radiocarbónicos de contextos arqueológicos de
+#' las regiones de Tarapacá y Arica y Parinacota (norte de Chile), obtenidos del
+#' material suplementario de Méndez-Quiros et al. (2023). Incluye información
+#' contextual (sitio, unidad, material, tipo de contexto) y rangos de edad
+#' calibrada. La columna \code{d13C_ams} contiene valores de δ¹³C utilizados para
+#' la corrección AMS, no para análisis isotópico dietético.
+#'
+#' @format A data frame with 1,003 rows and 23 columns:
+#' \describe{
+#'   \item{record_id}{Sequential record identifier / Identificador secuencial de registro}
+#'   \item{admin_region}{Administrative region: Arica y Parinacota or Tarapacá / Región administrativa}
+#'   \item{basin}{Hydrological basin or coastal zone / Cuenca hidrológica o zona costera}
+#'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
+#'   \item{altitudinal_belt}{Altitudinal belt label from original publication / Piso altitudinal según publicación original}
+#'   \item{site_name}{Archaeological site name / Nombre del sitio arqueológico}
+#'   \item{unit}{Excavation unit / Unidad de excavación}
+#'   \item{sub_unit}{Sub-unit within the excavation unit / Sub-unidad dentro de la unidad de excavación}
+#'   \item{c14_lab_code}{Radiocarbon laboratory code / Código de laboratorio de radiocarbono}
+#'   \item{material}{Broad material category dated / Categoría general del material fechado}
+#'   \item{material_detail}{Specific material description / Descripción específica del material}
+#'   \item{c14_bp}{Conventional radiocarbon age (years BP) / Edad radiocarbónica convencional (años AP)}
+#'   \item{c14_error}{Measurement error (±1σ) / Error de medición (±1σ)}
+#'   \item{d13C_ams}{δ¹³C value used for AMS fractionation correction (‰ VPDB) — not for dietary analysis / Valor de δ¹³C para corrección de fraccionamiento AMS (‰ VPDB) — no para análisis dietético}
+#'   \item{reference_short}{Short bibliographic reference / Referencia bibliográfica abreviada}
+#'   \item{context_domestic}{Domestic context flag (X = yes) / Indicador de contexto doméstico (X = sí)}
+#'   \item{context_funerary}{Funerary context flag (X = yes) / Indicador de contexto funerario (X = sí)}
+#'   \item{context_agriculture}{Agricultural context flag (X = yes) / Indicador de contexto agrícola (X = sí)}
+#'   \item{context_other}{Other context flag (X = yes) / Indicador de otro tipo de contexto (X = sí)}
+#'   \item{c14_cal_from}{Calibrated age range start (cal BP, 2σ 95%) / Inicio del rango de edad calibrada (cal AP, 2σ 95%)}
+#'   \item{c14_cal_to}{Calibrated age range end (cal BP, 2σ 95%) / Fin del rango de edad calibrada (cal AP, 2σ 95%)}
+#'   \item{c14_cal_median}{Median calibrated age (cal BP) / Mediana de la edad calibrada (cal AP)}
+#'   \item{ecozone}{Ecological zone based on altitude: Coast (< 130 masl), Lowlands (130–1700 masl), Precordillera (1700–3700 masl), or Altiplano (> 3700 masl) / Zona ecológica basada en altitud}
+#' }
+#'
+#' @source Méndez-Quiros, P., et al. (2023). Supplementary material. Available via ARID — Atacama Repository of Isotopic Data. \url{https://github.com/mayorgarmijo/arid}
+"arid_c14"

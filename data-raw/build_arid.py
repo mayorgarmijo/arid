@@ -135,6 +135,7 @@ RENAME = {
     "Genus/Species": "genus_species",
     "Phostosynthetic_Pathway": "photosynthetic_pathway",
     "Plant_domesticate": "plant_domesticate",
+    "Periodo": "period_broad",
 }
 
 # ── Columnas que van a arid_sites ─────────────────────────────────────────────
@@ -172,9 +173,10 @@ def clean_table(df):
     df["locality"] = parsed["locality"]
     df["admin_region"] = parsed["admin_region"]
 
-    # Eliminar columnas vacías + las siempre eliminadas
-    empty_cols = [c for c in df.columns if df[c].isna().all()]
-    to_drop = set(DROP_ALWAYS + empty_cols + [GEO_COL])
+    # Eliminar columnas vacías, sin nombre (notas editoriales) + las siempre eliminadas
+    empty_cols   = [c for c in df.columns if df[c].isna().all()]
+    unnamed_cols = [c for c in df.columns if str(c).startswith("Unnamed:")]
+    to_drop = set(DROP_ALWAYS + empty_cols + unnamed_cols + [GEO_COL])
     df = df.drop(columns=[c for c in to_drop if c in df.columns])
 
     # Renombrar
@@ -201,7 +203,51 @@ def build_sites(tables):
     return sites
 
 
-def main(input_path, outdir):
+C14_ADMIN_MAP = {
+    "Tarapaca": "Tarapacá",
+    "Arica":    "Arica y Parinacota",
+}
+
+
+def build_c14(path, outdir):
+    df = pd.read_excel(path, sheet_name="Supl. 1", header=1)
+
+    df.columns = df.columns.str.strip()
+
+    df = df.rename(columns={
+        "ID":               "record_id",
+        "Region":           "admin_region",
+        "Basin":            "basin",
+        "Z":                "altitude_masl",
+        "Altitudinal Belt": "altitudinal_belt",
+        "Site":             "site_name",
+        "Unit":             "unit",
+        "Sub unit":         "sub_unit",
+        "Lab id.":          "c14_lab_code",
+        "Material":         "material",
+        "Material detail":  "material_detail",
+        "14C Age":          "c14_bp",
+        "±σ":               "c14_error",
+        "δ13C (‰)":         "d13C_ams",
+        "Reference":        "reference_short",
+        "Domestic":         "context_domestic",
+        "Funerary":         "context_funerary",
+        "Agriculture":      "context_agriculture",
+        "Other":            "context_other",
+        "from":             "c14_cal_from",
+        "to":               "c14_cal_to",
+        "median":           "c14_cal_median",
+    })
+
+    df["admin_region"]  = df["admin_region"].map(C14_ADMIN_MAP).fillna(df["admin_region"])
+    df["altitude_masl"] = pd.to_numeric(df["altitude_masl"], errors="coerce")
+    df["ecozone"]       = df["altitude_masl"].apply(assign_ecozone)
+
+    df.to_csv(outdir / "arid_c14.csv", index=False)
+    print(f"  arid_c14.csv — {len(df)} filas, {len(df.columns)} columnas")
+
+
+def main(input_path, outdir, c14_path=None):
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
 
@@ -223,12 +269,17 @@ def main(input_path, outdir):
         tbl.to_csv(outdir / f"arid_{name}.csv", index=False)
         print(f"  arid_{name}.csv — {tbl.shape[0]} filas, {tbl.shape[1]} columnas")
 
+    if c14_path:
+        print("\nConstruyendo arid_c14...")
+        build_c14(Path(c14_path), outdir)
+
     print("\nListo.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", required=True, help="Ruta al SAAID .xlsx")
-    parser.add_argument("--outdir", default=".", help="Directorio de salida")
+    parser.add_argument("--input",   required=True, help="Ruta al SAAID .xlsx")
+    parser.add_argument("--outdir",  default=".",   help="Directorio de salida")
+    parser.add_argument("--c14",     default=None,  help="Ruta al archivo Mendez-Quiros C14 .xlsx")
     args = parser.parse_args()
-    main(args.input, args.outdir)
+    main(args.input, args.outdir, args.c14)

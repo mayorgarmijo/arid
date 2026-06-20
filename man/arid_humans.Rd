@@ -5,14 +5,15 @@
 \alias{arid_humans}
 \title{Human isotopic data from the Atacama Desert}
 \format{
-A data frame with 1,821 rows and 47 columns:
+A data frame with 1,821 rows and 48 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
+\item{period_broad}{Simplified period grouping (e.g. Archaic, Formative, Late) / Agrupación de período simplificada}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
-\item{period}{Broad cultural or chronological period / Período cultural o cronológico amplio}
+\item{period}{Detailed cultural or chronological period / Período cultural o cronológico detallado}
 \item{period_from}{Start of period in calibrated years BP / Inicio del período en años calibrados AP}
 \item{period_to}{End of period in calibrated years BP / Fin del período en años calibrados AP}
 \item{c14_method}{Radiocarbon dating method (AMS, conventional) / Método de datación radiocarbónica}
