@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARID — Isotopic variation through time</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f8f7f4; --card: #ffffff; --border: #e2ddd6;
+    --text: #2c2825; --muted: #7a7068; --accent: #3d6b8f;
+    --archaic:#d4845a; --formative:#5a9e6f; --middle:#8b6fb5;
+    --lateint:#d4a043; --late:#c0534e;
+    --d13c:#3d6b8f; --d15n:#a0522d; --d18o:#2a7a5e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+  header { background: var(--text); color: #fff; padding: 2rem 2.5rem 1.5rem; }
+  header h1 { font-size: 1.6rem; font-weight: normal; letter-spacing: 0.02em; }
+  header p  { margin-top: 0.4rem; color: #c8c0b8; font-size: 0.9rem; font-family: sans-serif; }
+  .container { max-width: 1260px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .intro { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.4rem 1.8rem; margin-bottom: 2rem; font-size: 0.92rem; color: var(--muted); }
+  .intro strong { color: var(--text); }
+  .intro ul { margin: 0.6rem 0 0 1.2rem; }
+  .intro li { margin-bottom: 0.25rem; }
+
+  /* Controls */
+  .controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.5rem;
+              background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.4rem; }
+  .controls label { font-family: sans-serif; font-size: 0.82rem; color: var(--muted);
+                    text-transform: uppercase; letter-spacing: 0.06em; display: flex; flex-direction: column; gap: 0.3rem; }
+  .controls select { font-size: 0.9rem; padding: 0.3rem 0.5rem; border: 1px solid var(--border);
+                     border-radius: 4px; background: #fff; color: var(--text); cursor: pointer; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 2px solid var(--border); }
+  .tab  { font-family: sans-serif; font-size: 0.88rem; padding: 0.55rem 1.4rem; cursor: pointer;
+           color: var(--muted); border: 1px solid transparent; border-bottom: none;
+           border-radius: 5px 5px 0 0; background: transparent; transition: all .15s; margin-bottom: -2px; }
+  .tab:hover { color: var(--text); background: var(--card); }
+  .tab.active { color: var(--text); background: var(--card); border-color: var(--border);
+                border-bottom-color: var(--card); font-weight: 600; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Grid */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem 1.4rem; }
+  .card h3 { font-size: 0.9rem; font-weight: normal; color: var(--muted); font-family: sans-serif;
+             margin-bottom: 0.8rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+  .card h3 strong { color: var(--text); }
+  .chart-wrap { position: relative; height: 300px; }
+
+  /* Section title */
+  .section-title { font-size: 0.9rem; font-family: sans-serif; color: var(--muted);
+                   text-transform: uppercase; letter-spacing: 0.08em;
+                   margin: 2rem 0 0.8rem; border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; font-family: sans-serif;
+            font-size: 0.82rem; color: var(--muted); margin: 1.2rem 0; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-dot  { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Interpretation box */
+  .interp { background: #f0f4f8; border-left: 3px solid var(--accent); border-radius: 0 5px 5px 0;
+            padding: 1rem 1.2rem; font-size: 0.88rem; color: var(--text); margin-top: 1.8rem; line-height: 1.65; }
+  .interp h4 { font-size: 0.85rem; font-family: sans-serif; text-transform: uppercase;
+               letter-spacing: 0.06em; color: var(--accent); margin-bottom: 0.6rem; }
+  .interp ul { margin-left: 1.2rem; }
+  .interp li { margin-bottom: 0.35rem; }
+
+  /* Summary table */
+  .table-wrap { overflow-x: auto; margin-top: 1rem; }
+  table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.82rem; }
+  th { background: var(--bg); color: var(--muted); font-weight: 600; text-align: left;
+       padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 0.4rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .period-badge { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 20px;
+                  font-size: 0.74rem; font-weight: 600; color: #fff; white-space: nowrap; }
+  .tag-archaic{background:var(--archaic)} .tag-formative{background:var(--formative)}
+  .tag-middle{background:var(--middle)}   .tag-lateint{background:var(--lateint)}
+  .tag-late{background:var(--late)}
+
+  /* Biplot full width */
+  .biplot-wrap { height: 460px; }
+
+  footer { text-align: center; font-family: sans-serif; font-size: 0.78rem; color: var(--muted);
+           padding: 2rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+  .no-data { text-align: center; padding: 3rem 1rem; color: var(--muted); font-family: sans-serif; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ARID — Isotopic variation through time</h1>
+  <p>δ¹³C · δ¹⁵N (organic tissue) · δ¹⁸O (carbonate tissue) across regions and ecozones of northern Chile</p>
+</header>
+
+<div class="container">
+
+  <div class="intro">
+    <strong>What this shows:</strong> isotopic values summarized as median ± IQR for groups with ≥ 3 individuals,
+    plotted against time (BCE/CE). Bubble size is proportional to sample size.
+    <ul>
+      <li><strong>δ¹³C</strong> reflects dietary carbon: more negative = C3-dominated diet (plants, marine); less negative = C4 inputs (maize, chenopods) or high marine protein.</li>
+      <li><strong>δ¹⁵N</strong> reflects trophic level, aridity, and marine protein intake. High values (&gt;20‰) are typical of coastal diets in the Atacama.</li>
+      <li><strong>δ¹⁸O</strong> (bone apatite) reflects water sources and mobility. More negative = higher altitude or cooler/wetter sources.</li>
+    </ul>
+    <br>Periods with mixed assignments (e.g. "Formative/Middle") are excluded. Only groups with n ≥ 3 are shown.
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <label>Region
+      <select id="sel-region">
+        <option value="all">All regions</option>
+        <option value="Arica y Parinacota">Arica y Parinacota</option>
+        <option value="Tarapaca">Tarapacá</option>
+        <option value="Antofagasta">Antofagasta</option>
+      </select>
+    </label>
+    <label>Ecozone
+      <select id="sel-ecozone">
+        <option value="all">All ecozones</option>
+        <option value="Coast">Coast</option>
+        <option value="Lowlands">Lowlands</option>
+        <option value="Precordillera">Precordillera</option>
+        <option value="Altiplano">Altiplano</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="d13C">δ¹³C — dietary carbon</button>
+    <button class="tab" data-tab="d15N">δ¹⁵N — trophic level</button>
+    <button class="tab" data-tab="d18O">δ¹⁸O — water sources</button>
+    <button class="tab" data-tab="biplot">δ¹³C vs δ¹⁵N biplot</button>
+    <button class="tab" data-tab="table">Summary table</button>
+  </div>
+
+  <!-- ── δ¹³C TAB ─────────────────────────────────────────────────────────── -->
+  <div class="tab-panel active" id="panel-d13C">
+    <div class="legend">
+      <span style="font-weight:600; color:var(--text)">Period:</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--archaic)"></span>Archaic</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--formative)"></span>Formative</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--middle)"></span>Middle</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--lateint)"></span>Late Intermediate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--late)"></span>Late</span>
+      <span style="margin-left:auto; font-size:0.78rem">Organic tissue · n ≥ 3</span>
+    </div>
+    <div class="grid" id="grid-d13C"></div>
+    <div class="interp" id="interp-d13C">
+      <h4>Patterns in δ¹³C</h4>
+      <ul>
+        <li><strong>Coast (all regions):</strong> relatively enriched δ¹³C (–14 to –10‰) throughout, consistent with sustained high marine protein intake. Arica y Parinacota Coast shows a marked enrichment in the Late period (median ~–10.9‰), possibly linked to intensified coastal exploitation or maize consumption.</li>
+        <li><strong>Lowlands (Arica y Parinacota):</strong> gradual enrichment from Formative (–15.4‰) to Late Intermediate (–11.9‰), consistent with increasing maize and C4-plant contribution to the diet over time.</li>
+        <li><strong>Lowlands (Tarapacá):</strong> sharp enrichment between Formative (–15.7‰) and Late Intermediate (–10.0‰) — one of the steepest temporal shifts in the dataset, suggesting rapid dietary change.</li>
+        <li><strong>Precordillera (Antofagasta):</strong> consistently depleted δ¹³C (–17 to –14‰), reflecting C3-dominated agriculture (tubers, quinoa) throughout the Middle and Late Intermediate periods.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── δ¹⁵N TAB ─────────────────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-d15N">
+    <div class="legend">
+      <span style="font-weight:600; color:var(--text)">Period:</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--archaic)"></span>Archaic</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--formative)"></span>Formative</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--middle)"></span>Middle</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--lateint)"></span>Late Intermediate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--late)"></span>Late</span>
+      <span style="margin-left:auto; font-size:0.78rem">Organic tissue · n ≥ 3</span>
+    </div>
+    <div class="grid" id="grid-d15N"></div>
+    <div class="interp" id="interp-d15N">
+      <h4>Patterns in δ¹⁵N</h4>
+      <ul>
+        <li><strong>Coast:</strong> persistently high δ¹⁵N (22–27‰) across all periods and regions, a hallmark of marine protein consumption amplified by hyper-arid Atacama baseline enrichment.</li>
+        <li><strong>Arica y Parinacota Lowlands:</strong> δ¹⁵N increases from Formative (16.4‰) to Late Intermediate (20.5‰), suggesting greater reliance on animal protein or enriched water sources in later periods.</li>
+        <li><strong>Tarapacá Lowlands:</strong> low δ¹⁵N in the Formative (12.5‰) vs. elevated Late Intermediate (16.5‰), possibly reflecting a dietary shift toward animal products or increased aridity effects.</li>
+        <li><strong>Precordillera (Antofagasta):</strong> strikingly low and stable δ¹⁵N (~11‰) across Formative, Middle, and Late Intermediate, consistent with C3 plant-based diets and freshwater sources at altitude.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── δ¹⁸O TAB ─────────────────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-d18O">
+    <div class="legend">
+      <span style="font-weight:600; color:var(--text)">Period:</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--archaic)"></span>Archaic</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--formative)"></span>Formative</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--middle)"></span>Middle</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--lateint)"></span>Late Intermediate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--late)"></span>Late</span>
+      <span style="margin-left:auto; font-size:0.78rem">Carbonate tissue (bone apatite) · n ≥ 3</span>
+    </div>
+    <div class="grid" id="grid-d18O"></div>
+    <div class="interp" id="interp-d18O">
+      <h4>Patterns in δ¹⁸O</h4>
+      <ul>
+        <li><strong>Antofagasta Coast:</strong> δ¹⁸O increases from Archaic (–2.95‰) to Formative (–1.4‰), suggesting a shift toward more evaporated or lower-altitude water sources in later periods.</li>
+        <li><strong>Antofagasta Precordillera:</strong> consistently depleted values (~–5‰) in Formative and Middle periods, consistent with high-altitude meteoric water (Andean precipitation). Slight enrichment in Late Intermediate may reflect increased mobility or use of different water sources.</li>
+        <li><strong>Antofagasta Lowlands:</strong> more depleted values in Late Intermediate (–5.2‰) than Formative (–2.95‰), possibly indicating greater use of Andean-sourced river water in later periods.</li>
+        <li><strong>Tarapacá Lowlands:</strong> very depleted δ¹⁸O in Late Intermediate (–8.2‰), the most negative in the dataset, suggesting strong reliance on Andean-origin water (rivers flowing from the altiplano).</li>
+        <li><strong>Caution:</strong> δ¹⁸O coverage is uneven — most data comes from Antofagasta (San Pedro de Atacama area). Patterns from regions with few groups (n &lt; 3 excluded) should be interpreted carefully.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── BIPLOT TAB ────────────────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-biplot">
+    <div class="legend" style="margin-top:1.2rem">
+      <span style="font-weight:600; color:var(--text)">Period:</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--archaic)"></span>Archaic</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--formative)"></span>Formative</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--middle)"></span>Middle</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--lateint)"></span>Late Intermediate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--late)"></span>Late</span>
+      <span style="margin-left:auto; font-size:0.78rem">Bubble size = n · Hover for details</span>
+    </div>
+    <div class="card">
+      <h3><strong>δ¹³C vs δ¹⁵N</strong> — median values by region × ecozone × period</h3>
+      <div class="chart-wrap biplot-wrap"><canvas id="biplot"></canvas></div>
+    </div>
+    <div class="interp" style="margin-top:1.5rem">
+      <h4>Reading the biplot</h4>
+      <ul>
+        <li><strong>Upper-right quadrant</strong> (δ¹³C &gt; –13, δ¹⁵N &gt; 20): coastal diet dominated by marine protein, characteristic of all coastal groups regardless of period.</li>
+        <li><strong>Lower-left quadrant</strong> (δ¹³C &lt; –15, δ¹⁵N &lt; 14): C3 plant-based diet with low trophic level — Precordillera and some inland Formative groups (Antofagasta, Tarapacá).</li>
+        <li><strong>Temporal trajectory (Lowlands):</strong> Lowland groups shift from lower-left (Formative) toward upper-right (Late Intermediate), indicating a convergence toward more enriched diets combining C4 plants and/or animal protein over time.</li>
+        <li>Groups in the upper-left (enriched δ¹⁵N, depleted δ¹³C) may reflect diets high in freshwater fish or herbivores feeding on C3 plants.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── TABLE TAB ─────────────────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-table">
+    <div class="section-title" style="margin-top:1.5rem">Complete summary — organic tissue (δ¹³C, δ¹⁵N)</div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Region</th><th>Ecozone</th><th>Period</th>
+              <th>n δ¹³C</th><th>δ¹³C median</th><th>IQR</th>
+              <th>n δ¹⁵N</th><th>δ¹⁵N median</th><th>IQR</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-organic"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section-title">δ¹⁸O summary — carbonate tissue</div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Region</th><th>Ecozone</th><th>Period</th>
+              <th>n</th><th>δ¹⁸O median</th><th>IQR</th><th>Mean ± SD</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-d18o"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  ARID · Atacama Repository of Isotopic Data · Data: CC BY 4.0<br>
+  Organic tissue (δ¹³C, δ¹⁵N): n = 1,821 rows · Carbonate tissue (δ¹⁸O): n = 449 with data
+</footer>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const ORGANIC = [
+  {region:"Arica y Parinacota",ecozone:"Coast",period:"Archaic",n_d13C:67,d13C_med:-12.9,d13C_q25:-14.15,d13C_q75:-12.35,n_d15N:69,d15N_med:24,d15N_q25:23.1,d15N_q75:25,period_from:-3739,period_to:-2147},
+  {region:"Arica y Parinacota",ecozone:"Coast",period:"Formative",n_d13C:27,d13C_med:-14.4,d13C_q25:-14.9,d13C_q75:-13.85,n_d15N:27,d15N_med:23.2,d15N_q25:22.3,d15N_q75:25.05,period_from:-1343,period_to:-525},
+  {region:"Arica y Parinacota",ecozone:"Coast",period:"Middle",n_d13C:3,d13C_med:-18.4,d13C_q25:-18.45,d13C_q75:-15.9,n_d15N:3,d15N_med:26.2,d15N_q25:23.45,d15N_q75:28.7,period_from:500,period_to:700},
+  {region:"Arica y Parinacota",ecozone:"Coast",period:"Late",n_d13C:131,d13C_med:-10.9,d13C_q25:-11.8,d13C_q75:-10.2,n_d15N:131,d15N_med:24.8,d15N_q25:24,d15N_q75:26.65,period_from:1440,period_to:1509},
+  {region:"Arica y Parinacota",ecozone:"Lowlands",period:"Formative",n_d13C:177,d13C_med:-15.4,d13C_q25:-16.9,d13C_q75:-13.7,n_d15N:177,d15N_med:16.4,d15N_q25:13.1,d15N_q75:21.3,period_from:-1317,period_to:220},
+  {region:"Arica y Parinacota",ecozone:"Lowlands",period:"Middle",n_d13C:77,d13C_med:-13.7,d13C_q25:-15.8,d13C_q75:-11.9,n_d15N:78,d15N_med:20,d15N_q25:11.93,d15N_q75:21.95,period_from:506,period_to:990},
+  {region:"Arica y Parinacota",ecozone:"Lowlands",period:"Late Intermediate",n_d13C:104,d13C_med:-11.9,d13C_q25:-13.43,d13C_q75:-11.2,n_d15N:105,d15N_med:20.5,d15N_q25:16.8,d15N_q75:23.1,period_from:996,period_to:1455},
+  {region:"Arica y Parinacota",ecozone:"Lowlands",period:"Late",n_d13C:9,d13C_med:-10.9,d13C_q25:-12.4,d13C_q75:-9.5,n_d15N:9,d15N_med:22.3,d15N_q25:20.4,d15N_q75:23.1,period_from:1450,period_to:1540},
+  {region:"Tarapaca",ecozone:"Coast",period:"Formative",n_d13C:55,d13C_med:-13.1,d13C_q25:-14.5,d13C_q75:-12.5,n_d15N:55,d15N_med:26.6,d15N_q25:25.35,d15N_q75:28.1,period_from:-1155,period_to:376},
+  {region:"Tarapaca",ecozone:"Coast",period:"Late Intermediate",n_d13C:9,d13C_med:-11.4,d13C_q25:-11.9,d13C_q75:-11.3,n_d15N:9,d15N_med:26.1,d15N_q25:24.8,d15N_q75:26.6,period_from:900,period_to:1450},
+  {region:"Tarapaca",ecozone:"Lowlands",period:"Formative",n_d13C:22,d13C_med:-15.65,d13C_q25:-16.7,d13C_q75:-14.75,n_d15N:22,d15N_med:12.5,d15N_q25:11.03,d15N_q75:13.85,period_from:-923,period_to:568},
+  {region:"Tarapaca",ecozone:"Lowlands",period:"Late Intermediate",n_d13C:59,d13C_med:-10,d13C_q25:-10.8,d13C_q75:-9.1,n_d15N:59,d15N_med:16.5,d15N_q25:14.2,d15N_q75:21.3,period_from:902,period_to:1450},
+  {region:"Antofagasta",ecozone:"Coast",period:"Archaic",n_d13C:7,d13C_med:-11.9,d13C_q25:-12.3,d13C_q75:-11.85,n_d15N:7,d15N_med:23.6,d15N_q25:23.55,d15N_q75:23.95,period_from:-5500,period_to:-2000},
+  {region:"Antofagasta",ecozone:"Coast",period:"Formative",n_d13C:51,d13C_med:-11.6,d13C_q25:-12.25,d13C_q75:-11.3,n_d15N:51,d15N_med:24.3,d15N_q25:23.6,d15N_q75:25.5,period_from:-1360,period_to:251},
+  {region:"Antofagasta",ecozone:"Coast",period:"Late Intermediate",n_d13C:8,d13C_med:-12.05,d13C_q25:-12.8,d13C_q75:-11.7,n_d15N:8,d15N_med:25.7,d15N_q25:24.98,d15N_q75:26.13,period_from:900,period_to:1485},
+  {region:"Antofagasta",ecozone:"Lowlands",period:"Formative",n_d13C:49,d13C_med:-15.5,d13C_q25:-16.4,d13C_q75:-14.8,n_d15N:49,d15N_med:17.7,d15N_q25:15.4,d15N_q75:21.6,period_from:-722,period_to:279},
+  {region:"Antofagasta",ecozone:"Lowlands",period:"Late Intermediate",n_d13C:23,d13C_med:-12.3,d13C_q25:-12.7,d13C_q75:-11.4,n_d15N:23,d15N_med:17.3,d15N_q25:15.7,d15N_q75:20.25,period_from:950,period_to:1150},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Formative",n_d13C:59,d13C_med:-17.1,d13C_q25:-18.95,d13C_q75:-16.1,n_d15N:59,d15N_med:11.4,d15N_q25:10.7,d15N_q75:13.7,period_from:-987,period_to:136},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Middle",n_d13C:135,d13C_med:-14.7,d13C_q25:-16.3,d13C_q75:-13.6,n_d15N:135,d15N_med:11.3,d15N_q25:10.5,d15N_q75:11.85,period_from:372,period_to:936},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Late Intermediate",n_d13C:57,d13C_med:-14.2,d13C_q25:-15.1,d13C_q75:-13.4,n_d15N:57,d15N_med:11.1,d15N_q25:10.6,d15N_q75:11.7,period_from:959,period_to:1432}
+];
+
+const D18O = [
+  {region:"Antofagasta",ecozone:"Coast",period:"Archaic",n:6,med:-2.95,q25:-3.45,q75:-2.6,mean:-2.92,sd:0.82,period_from:-5500,period_to:-2000},
+  {region:"Antofagasta",ecozone:"Coast",period:"Formative",n:11,med:-1.4,q25:-2.2,q75:-1,mean:-1.55,sd:0.81,period_from:-700,period_to:-314},
+  {region:"Antofagasta",ecozone:"Coast",period:"Late Intermediate",n:6,med:-1.65,q25:-3.28,q75:-1.3,mean:-2.4,sd:2.01,period_from:900,period_to:1485},
+  {region:"Antofagasta",ecozone:"Lowlands",period:"Formative",n:6,med:-2.95,q25:-5.92,q75:-1.63,mean:-3.83,sd:2.95,period_from:-214,period_to:-85},
+  {region:"Antofagasta",ecozone:"Lowlands",period:"Late Intermediate",n:23,med:-5.2,q25:-6.05,q75:-4.65,mean:-5.68,sd:1.62,period_from:950,period_to:1150},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Formative",n:19,med:-5,q25:-5.5,q75:-4,mean:-4.89,sd:1.56,period_from:-607,period_to:-54},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Middle",n:263,med:-4.9,q25:-6.7,q75:-3.8,mean:-5.13,sd:2.43,period_from:357,period_to:937},
+  {region:"Antofagasta",ecozone:"Precordillera",period:"Late Intermediate",n:66,med:-4,q25:-4.97,q75:-3.5,mean:-4.16,sd:2.26,period_from:915,period_to:1419},
+  {region:"Tarapaca",ecozone:"Lowlands",period:"Late Intermediate",n:49,med:-8.2,q25:-8.8,q75:-7.6,mean:-8.19,sd:1.33,period_from:900,period_to:1450}
+];
+
+const PERIOD_COLOR = {
+  "Archaic":"#d4845a","Formative":"#5a9e6f","Middle":"#8b6fb5",
+  "Late Intermediate":"#d4a043","Late":"#c0534e"
+};
+const PERIOD_ORDER = ["Archaic","Formative","Middle","Late Intermediate","Late"];
+const PERIOD_TAG = {
+  "Archaic":"archaic","Formative":"formative","Middle":"middle",
+  "Late Intermediate":"lateint","Late":"late"
+};
+
+function hex2rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let AR = "all", EZ = "all";
+const charts = {};
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+function filter(data){ return data.filter(d=>(AR==="all"||d.region===AR)&&(EZ==="all"||d.ecozone===EZ)); }
+
+function uniqueGroups(data){
+  const seen=new Set(), out=[];
+  data.forEach(d=>{const k=d.region+"||"+d.ecozone; if(!seen.has(k)){seen.add(k);out.push({region:d.region,ecozone:d.ecozone});}});
+  return out;
+}
+
+function midpoint(d){ return (d.period_from+d.period_to)/2; }
+function fmtBCE(y){ return y<0?`${Math.abs(Math.round(y))} BCE`:`${Math.round(y)} CE`; }
+function periodTag(p){ return `<span class="period-badge tag-${PERIOD_TAG[p]||'archaic'}">${p}</span>`; }
+
+// ── TOOLTIP FACTORY ────────────────────────────────────────────────────────────
+const tooltipOpts = {
+  backgroundColor:"rgba(44,40,37,0.92)", titleFont:{size:11}, bodyFont:{size:11},
+  padding:10, cornerRadius:4
+};
+
+// ── TIMELINE CHART ────────────────────────────────────────────────────────────
+function buildTimelineChart(canvas, rows, varKey, color, yLabel) {
+  if (charts[canvas.id]) charts[canvas.id].destroy();
+  const pts = rows.filter(r => r[`n_${varKey}`] >= 3 || r.n >= 3);
+  const medKey = varKey === "d18O" ? "med" : `${varKey}_med`;
+  const q25Key = varKey === "d18O" ? "q25" : `${varKey}_q25`;
+  const q75Key = varKey === "d18O" ? "q75" : `${varKey}_q75`;
+  const nKey   = varKey === "d18O" ? "n"   : `n_${varKey}`;
+
+  const dataset = {
+    label: yLabel, _rows: pts,
+    data: pts.map(r=>({x:midpoint(r), y:r[medKey]})),
+    borderColor: color, borderWidth: 2, tension: 0.35, fill: false,
+    backgroundColor: pts.map(r=>hex2rgba(PERIOD_COLOR[r.period]||"#999",0.9)),
+    pointBackgroundColor: pts.map(r=>PERIOD_COLOR[r.period]||"#999"),
+    pointRadius: pts.map(r=>Math.max(5,Math.min(15,Math.sqrt(r[nKey])*1.6))),
+    pointHoverRadius: pts.map(r=>Math.max(6,Math.min(17,Math.sqrt(r[nKey])*1.8)))
+  };
+
+  charts[canvas.id] = new Chart(canvas.getContext("2d"), {
+    type:"line", data:{datasets:[dataset]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{...tooltipOpts, callbacks:{
+          title:items=>{const r=items[0].dataset._rows[items[0].dataIndex]; return r?`${r.period}  (${fmtBCE(r.period_from)} – ${fmtBCE(r.period_to)})`:"";}  ,
+          label:item=>{
+            const r=item.dataset._rows[item.dataIndex]; if(!r) return "";
+            const med=r[medKey],q25=r[q25Key],q75=r[q75Key],n=r[nKey];
+            return [`${yLabel}`,`  median: ${med}‰`,`  IQR: ${q25} – ${q75}‰`,`  n = ${n}`];
+          }
+        }}
+      },
+      scales:{
+        x:{type:"linear",
+          title:{display:true,text:"BCE/CE",font:{size:10},color:"#7a7068"},
+          ticks:{callback:v=>v<0?`${Math.abs(v)} BCE`:`${v} CE`,font:{size:10},color:"#7a7068",maxTicksLimit:7},
+          grid:{color:"#f0ece6"}},
+        y:{title:{display:true,text:yLabel,font:{size:10},color},
+          ticks:{font:{size:10},color:"#7a7068"},grid:{color:"#f0ece6"}}
+      }
+    }
+  });
+}
+
+function buildGrid(gridId, data, varKey, color, yLabel) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = "";
+  const filtered = filter(data);
+  const groups = uniqueGroups(filtered);
+
+  if (groups.length === 0) {
+    grid.innerHTML = `<div class="no-data" style="grid-column:1/-1">No groups with n ≥ 3 match the current filter.</div>`;
+    return;
+  }
+
+  groups.forEach(({region,ecozone}) => {
+    const rows = filtered
+      .filter(d=>d.region===region&&d.ecozone===ecozone)
+      .sort((a,b)=>PERIOD_ORDER.indexOf(a.period)-PERIOD_ORDER.indexOf(b.period));
+    const nKey = varKey==="d18O"?"n":`n_${varKey}`;
+    if (!rows.some(r=>r[nKey]>=3)) return;
+
+    const card = document.createElement("div"); card.className="card";
+    const cid = `chart-${gridId}-${region.replace(/\s/g,"-")}-${ecozone}`;
+    card.innerHTML=`<h3><strong>${region}</strong> · ${ecozone}</h3><div class="chart-wrap"><canvas id="${cid}"></canvas></div>`;
+    grid.appendChild(card);
+    buildTimelineChart(card.querySelector("canvas"), rows, varKey, color, yLabel);
+    card.querySelector("canvas").id = cid;
+  });
+}
+
+// ── BIPLOT ────────────────────────────────────────────────────────────────────
+function buildBiplot() {
+  if (charts["biplot"]) charts["biplot"].destroy();
+  const filtered = filter(ORGANIC).filter(d=>d.n_d13C>=3&&d.n_d15N>=3);
+  const datasets = PERIOD_ORDER.map(period => {
+    const pts = filtered.filter(d=>d.period===period);
+    return {
+      label: period,
+      data: pts.map(d=>({x:d.d13C_med, y:d.d15N_med,
+        r:Math.max(7,Math.min(24,Math.sqrt(Math.min(d.n_d13C,d.n_d15N))*2.1)), _d:d})),
+      backgroundColor: hex2rgba(PERIOD_COLOR[period],0.75),
+      borderColor: PERIOD_COLOR[period], borderWidth:1.5
+    };
+  }).filter(ds=>ds.data.length>0);
+
+  charts["biplot"] = new Chart(document.getElementById("biplot").getContext("2d"),{
+    type:"bubble", data:{datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{font:{size:11},padding:14,boxWidth:16}},
+        tooltip:{...tooltipOpts, callbacks:{
+          title:()=>"",
+          label:item=>{const d=item.raw._d; return [`${d.region} · ${d.ecozone}`,`Period: ${d.period}`,
+            `δ¹³C median: ${d.d13C_med}‰  (n=${d.n_d13C})`,`δ¹⁵N median: ${d.d15N_med}‰  (n=${d.n_d15N})`];}
+        }}
+      },
+      scales:{
+        x:{title:{display:true,text:"δ¹³C median (‰ VPDB)",font:{size:11}},ticks:{font:{size:10},color:"#7a7068"},grid:{color:"#f0ece6"}},
+        y:{title:{display:true,text:"δ¹⁵N median (‰ AIR)",font:{size:11}},ticks:{font:{size:10},color:"#7a7068"},grid:{color:"#f0ece6"}}
+      }
+    }
+  });
+}
+
+// ── TABLES ────────────────────────────────────────────────────────────────────
+function buildTables() {
+  const fOrg = filter(ORGANIC).sort((a,b)=>{
+    if(a.region!==b.region) return a.region.localeCompare(b.region);
+    if(a.ecozone!==b.ecozone) return a.ecozone.localeCompare(b.ecozone);
+    return PERIOD_ORDER.indexOf(a.period)-PERIOD_ORDER.indexOf(b.period);
+  });
+  document.getElementById("tbody-organic").innerHTML = fOrg.map(d=>`
+    <tr><td>${d.region}</td><td>${d.ecozone}</td><td>${periodTag(d.period)}</td>
+    <td style="text-align:right">${d.n_d13C}</td>
+    <td style="text-align:right">${d.d13C_med}‰</td>
+    <td style="text-align:right;color:var(--muted)">${d.d13C_q25} – ${d.d13C_q75}</td>
+    <td style="text-align:right">${d.n_d15N}</td>
+    <td style="text-align:right">${d.d15N_med}‰</td>
+    <td style="text-align:right;color:var(--muted)">${d.d15N_q25} – ${d.d15N_q75}</td></tr>`).join("");
+
+  const fD18 = filter(D18O).sort((a,b)=>{
+    if(a.region!==b.region) return a.region.localeCompare(b.region);
+    if(a.ecozone!==b.ecozone) return a.ecozone.localeCompare(b.ecozone);
+    return PERIOD_ORDER.indexOf(a.period)-PERIOD_ORDER.indexOf(b.period);
+  });
+  document.getElementById("tbody-d18o").innerHTML = fD18.map(d=>`
+    <tr><td>${d.region}</td><td>${d.ecozone}</td><td>${periodTag(d.period)}</td>
+    <td style="text-align:right">${d.n}</td>
+    <td style="text-align:right">${d.med}‰</td>
+    <td style="text-align:right;color:var(--muted)">${d.q25} – ${d.q75}</td>
+    <td style="text-align:right;color:var(--muted)">${d.mean} ± ${d.sd}</td></tr>`).join("");
+}
+
+// ── RENDER ALL ────────────────────────────────────────────────────────────────
+function renderAll() {
+  buildGrid("grid-d13C", ORGANIC, "d13C", "#3d6b8f", "δ¹³C (‰ VPDB)");
+  buildGrid("grid-d15N", ORGANIC, "d15N", "#a0522d", "δ¹⁵N (‰ AIR)");
+  buildGrid("grid-d18O", D18O,    "d18O", "#2a7a5e", "δ¹⁸O (‰ VPDB)");
+  buildBiplot();
+  buildTables();
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("panel-"+tab.dataset.tab).classList.add("active");
+    // Re-render charts in newly visible panel (canvas needs to be visible first)
+    setTimeout(()=>{
+      if(tab.dataset.tab==="d13C") buildGrid("grid-d13C",ORGANIC,"d13C","#3d6b8f","δ¹³C (‰ VPDB)");
+      if(tab.dataset.tab==="d15N") buildGrid("grid-d15N",ORGANIC,"d15N","#a0522d","δ¹⁵N (‰ AIR)");
+      if(tab.dataset.tab==="d18O") buildGrid("grid-d18O",D18O,"d18O","#2a7a5e","δ¹⁸O (‰ VPDB)");
+      if(tab.dataset.tab==="biplot") buildBiplot();
+      if(tab.dataset.tab==="table") buildTables();
+    },50);
+  });
+});
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
+document.getElementById("sel-region").addEventListener("change",e=>{AR=e.target.value;renderAll();});
+document.getElementById("sel-ecozone").addEventListener("change",e=>{EZ=e.target.value;renderAll();});
+
+renderAll();
+</script>
+</body>
+</html>
