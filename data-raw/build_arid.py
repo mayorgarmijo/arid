@@ -414,7 +414,67 @@ def build_c14_mendez(path):
     return df
 
 
-def main(input_path, outdir, c14_path=None):
+def load_mocha(mocha_path):
+    """Carga datos de Mocha 2 desde xlsx y normaliza al formato ARID."""
+    if not Path(mocha_path).exists():
+        return None
+
+    df = pd.read_excel(mocha_path)
+
+    # Renombrar columnas Unicode (nombres exactos del archivo)
+    df = df.rename(columns={
+        'δ¹³C VPDB (‰)': 'd13C',
+        'δ¹⁵N AIR (‰)': 'd15N',
+    })
+
+    # Normalizar
+    df['site_name'] = df['Site'].fillna('Mocha 2')
+    df['sample_id'] = df['Sample'].fillna('unknown')
+    df['sex'] = df['Sex'].fillna('Unknown')
+    df['age_category'] = df['Age'].fillna('Unknown')
+    df['reference_short'] = 'Wande et al. (2026)'
+    df['doi'] = df['DOI'].iloc[0] if 'DOI' in df.columns else None
+
+    # Coordenadas de Mocha 2: UTM 19S (470450.77 E, 7809263.13 S) → WGS84
+    df['lat'] = -19.81231
+    df['lon'] = -69.28215
+    df['altitude_masl'] = 1650  # aprox. precordillera Tarapacá
+    df['admin_region'] = 'Tarapaca'
+    df['locality'] = 'Mocha'
+    df['ecozone'] = assign_ecozone(df['altitude_masl'].iloc[0])
+
+    # Período: Late Intermediate/Late (1250-1450 CE)
+    df['period'] = 'Late Intermediate'
+    df['period_broad'] = infer_period_broad('Late Intermediate')
+    df['period_from'] = 1250
+    df['period_to'] = 1450
+
+    # Estructura de tejido: todos colágeno orgánico
+    df['tissue'] = 'Bone collagen'
+    df['element'] = df['Sample'].str.extract(r'(Mandib|Rib|Femur|Tibia|Fibula|Humerus)', expand=False)
+    df['element'] = df['element'].fillna('Bone')
+    df['tissue_type'] = 'organic'
+    df['CN_ratio'] = df.get('C/N', None)
+    df['wt_C'] = df.get('%C', None)
+    df['wt_N'] = df.get('%N', None)
+
+    # Columnas mínimas para ARID
+    cols_out = ['site_name', 'sample_id', 'sex', 'age_category', 'reference_short', 'doi',
+                'lat', 'lon', 'altitude_masl', 'admin_region', 'locality', 'ecozone',
+                'period', 'period_broad', 'period_from', 'period_to',
+                'tissue', 'element', 'tissue_type',
+                'd13C', 'd15N', 'CN_ratio', 'wt_C', 'wt_N']
+
+    df = df[[c for c in cols_out if c in df.columns]]
+
+    # Convertir tipos
+    for col in ['d13C', 'd15N', 'CN_ratio', 'wt_C', 'wt_N']:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    return df
+
+
+def main(input_path, outdir, c14_path=None, mocha_path=None):
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
 
@@ -440,6 +500,23 @@ def main(input_path, outdir, c14_path=None):
             tables[name]["has_c14"] = df[c14_detect].notna().any(axis=1)
         c14_to_drop = [c for c in C14_COLS if c in df.columns]
         tables[name] = tables[name].drop(columns=c14_to_drop)
+
+    # ── Cargar Mocha 2 y concatenar con humans ───────────────────────────────────
+    if mocha_path and Path(mocha_path).exists():
+        print("\nCargando Mocha 2...")
+        mocha = load_mocha(mocha_path)
+        if mocha is not None:
+            # Normalizar columnas de humans para que coincidan
+            humans_cols = set(tables["humans"].columns)
+            mocha_cols = set(mocha.columns)
+            mocha_norm = mocha[[c for c in mocha.columns if c in humans_cols or c in ['site_name','sample_id','sex','age_category','reference_short','doi','lat','lon','altitude_masl','admin_region','locality','ecozone','period','period_broad','period_from','period_to','tissue','element','tissue_type','d13C','d15N','CN_ratio','wt_C','wt_N']]]
+            # Agregar columnas faltantes de humans a mocha
+            for col in humans_cols:
+                if col not in mocha_norm.columns:
+                    mocha_norm[col] = None
+            # Concatenar
+            tables["humans"] = pd.concat([tables["humans"], mocha_norm[[c for c in tables["humans"].columns]]], ignore_index=True)
+            print(f"  Mocha 2: {mocha.shape[0]} individuos agregados")
 
     # ── Formato largo para humans y animals ───────────────────────────────────
     print("\nAplicando formato largo...")
@@ -496,5 +573,6 @@ if __name__ == "__main__":
     parser.add_argument("--input",  required=True, help="Ruta al SAAID .xlsx")
     parser.add_argument("--outdir", default=".",   help="Directorio de salida")
     parser.add_argument("--c14",    default=None,  help="Ruta al archivo Mendez-Quiros C14 .xlsx")
+    parser.add_argument("--mocha",  default=None,  help="Ruta al archivo Mocha 2 isotopes .xlsx")
     args = parser.parse_args()
-    main(args.input, args.outdir, args.c14)
+    main(args.input, args.outdir, args.c14, args.mocha)

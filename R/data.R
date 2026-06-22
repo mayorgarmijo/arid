@@ -13,7 +13,7 @@
 #' por tejido analizado. Los fechados radiocarbónicos se almacenan en `arid_c14`
 #' (vinculados mediante `lab_id`).
 #'
-#' @format A data frame with 2,598 rows and 37 columns:
+#' @format A data frame with 2,606 rows and 37 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 #'   \item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
