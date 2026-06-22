@@ -15,7 +15,7 @@ ARID includes five datasets:
 
 | Dataset | Description | Rows |
 |---|---|---|
-| `arid_humans` | Isotopic data from human skeletal and soft tissue samples (long format) | 2,598 |
+| `arid_humans` | Isotopic data from human skeletal and soft tissue samples (long format) | 2,606 |
 | `arid_animals` | Isotopic data from faunal remains (long format) | 424 |
 | `arid_plants` | Isotopic data from botanical remains | 576 |
 | `arid_sites` | Geographic and chronological context for 422 archaeological sites | 422 |
@@ -182,6 +182,11 @@ If you use ARID in a publication, please cite it as:
 ## Data sources
 
 ARID compiles data from peer-reviewed publications. Each record includes a short citation (`reference_short`) and a DOI (`doi`) linking to the original source.
+
+**Current sources:**
+- SAAID (Stable Isotope Archaeology and Anthropology Database) — human, animal, and plant isotopic data
+- Mendez-Quiros et al. (2023) — radiocarbon dates from archaeological contexts in northern Chile
+- Wande et al. (2026) *Front. Environ. Archaeol.* — human δ¹³C and δ¹⁵N from Mocha 2, Tarapacá (Late Intermediate period)
 
 ## Contributing
 
