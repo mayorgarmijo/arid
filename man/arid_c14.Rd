@@ -23,7 +23,7 @@ A data frame with 1,127 rows and 17 columns:
 \item{c14_cal_to}{Calibrated age range end, 2σ 95\% (BCE/CE) / Fin del rango calibrado 2σ 95\% (a.C./d.C.)}
 \item{material}{Material category dated / Categoría del material fechado}
 \item{source_table}{Origin of the record: "humans", "animals", "plants", or "context" / Origen del registro}
-\item{d13C_ams}{δ¹³C for AMS fractionation correction (per mille VPDB) — not for dietary analysis / δ¹³C para corrección AMS — no para análisis dietético}
+\item{d13C_ams}{δ¹³C for AMS fractionation correction (‰ VPDB) — not for dietary analysis / δ¹³C para corrección AMS — no para análisis dietético}
 }
 }
 \source{

@@ -25,9 +25,9 @@ A data frame with 576 rows and 29 columns:
 \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-\item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
-\item{d15N}{delta-15N (per mille AIR) / delta-15N (por mil AIR)}
-\item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+\item{d13C}{delta-13C (‰ VPDB) / delta-13C (por mil VPDB)}
+\item{d15N}{delta-15N (‰ AIR) / delta-15N (por mil AIR)}
+\item{d34S}{delta-34S (‰ VCDT) / delta-34S (por mil VCDT)}
 \item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
 \item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
 \item{doi}{DOI of the original publication / DOI de la publicación original}

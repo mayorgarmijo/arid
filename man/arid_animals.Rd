@@ -33,13 +33,13 @@ A data frame with 424 rows and 33 columns:
 \item{wt_C}{Weight percent carbon / Porcentaje en peso de carbono}
 \item{wt_N}{Weight percent nitrogen / Porcentaje en peso de nitrógeno}
 \item{CN_ratio}{Atomic C:N ratio / Relación C:N atómica}
-\item{d13C}{delta-13C (per mille VPDB) / delta-13C (por mil VPDB)}
-\item{d15N}{delta-15N from organic tissue (per mille AIR) / delta-15N de tejido orgánico}
+\item{d13C}{delta-13C (‰ VPDB) / delta-13C (por mil VPDB)}
+\item{d15N}{delta-15N from organic tissue (‰ AIR) / delta-15N de tejido orgánico}
 \item{wt_S}{Weight percent sulfur / Porcentaje en peso de azufre}
-\item{d34S}{delta-34S (per mille VCDT) / delta-34S (por mil VCDT)}
+\item{d34S}{delta-34S (‰ VCDT) / delta-34S (por mil VCDT)}
 \item{Sr87_Sr86}{87Sr/86Sr strontium isotope ratio / Relacion isotopica de estroncio}
 \item{tissue_type}{"organic" or "carbonate" / "organic" o "carbonate"}
-\item{d18O}{delta-18O from carbonate tissue (per mille VPDB; carbonate rows only) / delta-18O de tejido carbonato}
+\item{d18O}{delta-18O from carbonate tissue (‰ VPDB; carbonate rows only) / delta-18O de tejido carbonato}
 }
 }
 \source{
