@@ -109,7 +109,7 @@ ADMIN_MAP = {
     "Tarapacá Region":             "Tarapaca",
     "Tarpacá Region":              "Tarapaca",
     "Antofagasta Region":          "Antofagasta",
-    "Atacama Region":              "Atacama",
+    # "Atacama Region" excluded — outside study area (Arica y Parinacota, Tarapaca, Antofagasta only)
 }
 
 SPECIAL_LOCALITY = {
@@ -495,11 +495,20 @@ def main(input_path, outdir, c14_path=None, mocha_path=None):
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
 
+    VALID_REGIONS = {"Arica y Parinacota", "Tarapaca", "Antofagasta"}
+
     print("Cargando y filtrando datos...")
     tables = {}
     for sheet in ["Humans", "Animals", "Plants"]:
         raw = load_and_filter(input_path, sheet)
         df  = clean_table(raw)
+        # Excluir filas fuera del área de estudio
+        if "admin_region" in df.columns:
+            before = len(df)
+            df = df[df["admin_region"].isin(VALID_REGIONS)]
+            dropped = before - len(df)
+            if dropped:
+                print(f"  {sheet}: {dropped} filas excluidas (región fuera del área de estudio)")
         tables[sheet.lower()] = df
         print(f"  {sheet}: {df.shape}")
 
