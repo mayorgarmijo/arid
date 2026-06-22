@@ -438,7 +438,7 @@ def load_mocha(mocha_path):
     # Coordenadas de Mocha 2: UTM 19S (470450.77 E, 7809263.13 S) → WGS84
     df['lat'] = -19.81231
     df['lon'] = -69.28215
-    df['altitude_masl'] = 1650  # aprox. precordillera Tarapacá
+    df['altitude_masl'] = 2170  # Precordillera Tarapacá
     df['admin_region'] = 'Tarapaca'
     df['locality'] = 'Mocha'
     df['ecozone'] = assign_ecozone(df['altitude_masl'].iloc[0])
