@@ -117,6 +117,11 @@ SPECIAL_LOCALITY = {
         ("Laguna Lejia to Salar de Atacama", "Antofagasta"),
 }
 
+# Correcciones de admin_region por nombre de sitio (errores en el SAAID original)
+SITE_ADMIN_OVERRIDE = {
+    "Calate": "Antofagasta",
+}
+
 GEO_COL = "Valley, locality, closest town, political jurisdiction"
 
 # ── Columnas a eliminar siempre ───────────────────────────────────────────────
@@ -290,6 +295,12 @@ def clean_table(df):
     if "plant_domesticate" in df.columns:
         df["plant_domesticate"] = df["plant_domesticate"].map(DOMESTICATE_MAP)
 
+    # Correcciones de admin_region por sitio
+    if "site_name" in df.columns and "admin_region" in df.columns:
+        for site, region in SITE_ADMIN_OVERRIDE.items():
+            mask = df["site_name"].str.contains(site, case=False, na=False)
+            df.loc[mask, "admin_region"] = region
+
     return df
 
 
@@ -357,6 +368,12 @@ def build_sites(tables, c14_df=None):
         frames.append(c14_df[c14_site_cols].drop_duplicates())
 
     sites_raw = pd.concat(frames, ignore_index=True)
+
+    # Aplicar correcciones de admin_region antes de agrupar
+    for site, region in SITE_ADMIN_OVERRIDE.items():
+        mask = sites_raw["site_name"].str.contains(site, case=False, na=False)
+        sites_raw.loc[mask, "admin_region"] = region
+
     sites = sites_raw.groupby("site_name").agg(first_notnull).reset_index()
     return sites
 
