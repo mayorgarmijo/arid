@@ -102,3 +102,10 @@ arid_sites   <- reorder_cols(arid_sites,   SITES_COLS)
 arid_c14     <- reorder_cols(arid_c14,     C14_COLS)
 
 use_data(arid_humans, arid_animals, arid_plants, arid_sites, arid_c14, overwrite = TRUE)
+
+library(writexl)
+write_xlsx(arid_humans,  "data-raw/arid_humans.xlsx")
+write_xlsx(arid_animals, "data-raw/arid_animals.xlsx")
+write_xlsx(arid_plants,  "data-raw/arid_plants.xlsx")
+write_xlsx(arid_sites,   "data-raw/arid_sites.xlsx")
+write_xlsx(arid_c14,     "data-raw/arid_c14.xlsx")
