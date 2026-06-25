@@ -10,6 +10,22 @@ arid_plants  <- read_xlsx("data-raw/arid_plants.xlsx")
 arid_sites   <- read_xlsx("data-raw/arid_sites.xlsx")
 arid_c14     <- read_xlsx("data-raw/arid_c14.xlsx")
 
+fix <- function(df, ref_pattern, site = NA, lab = NA, pb, p) {
+  rows <- grepl(ref_pattern, df$reference_short, ignore.case = TRUE)
+  if (!is.na(site)) rows <- rows & df$site_name == site
+  if (!is.na(lab))  rows <- rows & df$lab_id    == lab
+  df$period_broad[rows] <- pb
+  df$period[rows]       <- p
+  df
+}
+
+arid_humans <- fix(arid_humans, "Poulson", site = "Playa Miller 7 (El Laucho)", pb = "Formative",         p = "Late Formative")
+arid_humans <- fix(arid_humans, "Poulson", site = "Azapa 75",                   pb = "Formative",         p = "Late Formative")
+arid_humans <- fix(arid_humans, "Poulson", site = "Azapa 140",                  pb = "Middle",            p = "Middle")
+arid_humans <- fix(arid_humans, "Poulson", site = "Azapa 8",                    pb = "Late Intermediate", p = "Late Intermediate")
+arid_humans <- fix(arid_humans, "Bonilla", lab  = "PML 7_T81_1",                pb = "Formative",         p = "Late Formative")
+arid_humans <- fix(arid_humans, "Alfonso",                                       pb = "Late Intermediate", p = "Late Intermediate")
+
 PERIOD_BROAD_LEVELS <- c(
   "Archaic", "Formative", "Formative/Middle", "Middle",
   "Middle/Late Intermediate", "Middle/Late Intermediate/Late", "Late Intermediate",
