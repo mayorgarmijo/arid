@@ -80,7 +80,7 @@ for _, r in k.iterrows():
     for tissue, col in [("Kernel OM", "om_d18O"), ("Kernel starch", "st_d18O"), ("Kernel cellulose", "cel_d18O")]:
         val = to_float(r[col])
         if val is not None:
-            rows.append({**base, "tissue": tissue, "d18O": val})
+            rows.append({**base, "tissue": tissue, "d18O": val, "d2H": None})
 
 # --- Cobs ---
 c = pd.read_excel("data-raw/Vidal-Elgueta et al. 2024.xlsx",
@@ -89,7 +89,7 @@ c.columns = [
     "id", "sample_type_src", "site",
     "om_pct", "om_C", "om_O", "om_d18O", "om_CO",
     "cel_pct", "cel_C", "cel_O", "cel_d18O", "cel_CO",
-    "d2HCN", "d_extra"
+    "d2H", "d_extra"
 ]
 
 for _, r in c.iterrows():
@@ -101,10 +101,14 @@ for _, r in c.iterrows():
         continue
     base = make_base_row(r["id"], site_key, "C")
 
-    for tissue, col in [("Cob OM", "om_d18O"), ("Cob cellulose", "cel_d18O")]:
-        val = to_float(r[col])
-        if val is not None:
-            rows.append({**base, "tissue": tissue, "d18O": val})
+    om_val = to_float(r["om_d18O"])
+    if om_val is not None:
+        rows.append({**base, "tissue": "Cob OM", "d18O": om_val, "d2H": None})
+
+    cel_d18O = to_float(r["cel_d18O"])
+    cel_d2H = to_float(r["d2H"])
+    if cel_d18O is not None or cel_d2H is not None:
+        rows.append({**base, "tissue": "Cob cellulose", "d18O": cel_d18O, "d2H": cel_d2H})
 
 new_df = pd.DataFrame(rows)
 print(f"New rows generated: {len(new_df)}")

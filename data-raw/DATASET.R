@@ -92,7 +92,7 @@ PLANTS_COLS <- c(
   "tissue",
   "photosynthetic_pathway", "plant_domesticate",
   "period_broad", "period", "period_from", "period_to",
-  "d13C", "d15N", "d34S", "Sr87_Sr86", "d18O",
+  "d13C", "d15N", "d34S", "Sr87_Sr86", "d18O", "d2H",
   "lat", "lon", "altitude_masl",
   "sample_type", "wt_C", "wt_N", "CN_ratio",
   "has_c14", "reference_short", "doi"
