@@ -89,9 +89,10 @@ ANIMALS_COLS <- c(
 PLANTS_COLS <- c(
   "admin_region", "locality", "ecozone", "site_name",
   "lab_id", "sample_id", "type_source", "taxon_local", "genus_species",
+  "tissue",
   "photosynthetic_pathway", "plant_domesticate",
   "period_broad", "period", "period_from", "period_to",
-  "d13C", "d15N", "d34S", "Sr87_Sr86",
+  "d13C", "d15N", "d34S", "Sr87_Sr86", "d18O",
   "lat", "lon", "altitude_masl",
   "sample_type", "wt_C", "wt_N", "CN_ratio",
   "has_c14", "reference_short", "doi"
