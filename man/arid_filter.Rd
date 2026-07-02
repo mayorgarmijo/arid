@@ -10,7 +10,8 @@ arid_filter(
   admin_region = NULL,
   period = NULL,
   period_broad = NULL,
-  locality = NULL
+  locality = NULL,
+  tissue_type = NULL
 )
 }
 \arguments{
@@ -31,6 +32,10 @@ arid_filter(
 
 \item{locality}{Character vector. One or more localities
 (e.g. \code{"Lower Azapa Valley"}).}
+
+\item{tissue_type}{Character vector. One or more of \code{"organic"},
+\code{"carbonate"} (humans and animals only; ignored for plant rows, which
+have no \code{tissue_type} column).}
 }
 \value{
 A filtered data frame.
@@ -58,6 +63,9 @@ arid_filter(period_broad = "Formative")
 
 # Specific sub-period
 arid_filter(period = "Early Archaic")
+
+# Only carbonate tissue rows for humans
+arid_filter(tables = "humans", tissue_type = "carbonate")
 
 }
 \seealso{

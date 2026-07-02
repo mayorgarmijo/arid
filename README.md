@@ -27,10 +27,10 @@ ARID includes five datasets:
 
 ```r
 # Only organic tissue rows
-subset(arid_humans, tissue_type == "organic")
+arid_filter(tables = "humans", tissue_type = "organic")
 
 # Only carbonate rows
-subset(arid_humans, tissue_type == "carbonate")
+arid_filter(tables = "humans", tissue_type = "carbonate")
 ```
 
 ### Key isotopic variables
@@ -89,10 +89,6 @@ arid_merge("plants")
 # Multiple tables — adds a 'source' column
 arid_merge(c("humans", "animals"))
 arid_merge()  # all three tables
-
-# Select tissue type after merging
-subset(arid_merge("humans"), tissue_type == "organic")
-subset(arid_merge("humans"), tissue_type == "carbonate")
 ```
 
 ### `arid_filter()`
@@ -107,6 +103,7 @@ Wraps `arid_merge()` and applies contextual filters in one call. At least one fi
 | `period_broad` | `"Archaic"`, `"Formative"`, `"Late Intermediate"`, `"Late"`, `"Colonial"`, … |
 | `period` | `"Early Archaic"`, `"Late Formative"`, … |
 | `locality` | e.g. `"Lower Azapa Valley"`, `"San Pedro de Atacama Oasis"` |
+| `tissue_type` | `"organic"`, `"carbonate"` (humans and animals only) |
 
 ```r
 # Filter by ecozone
@@ -127,10 +124,8 @@ arid_filter(tables = "humans", ecozone = "Altiplano", admin_region = "Antofagast
 # By locality
 arid_filter(locality = "Lower Azapa Valley")
 
-# Chain with dplyr for tissue-specific subsets
-library(dplyr)
-arid_filter(ecozone = "Coast", period_broad = "Formative") |>
-  filter(tissue_type == "organic")
+# Combine a contextual filter with tissue type
+arid_filter(ecozone = "Coast", period_broad = "Formative", tissue_type = "organic")
 ```
 
 ### `arid_chronology()`
@@ -165,12 +160,11 @@ head(arid_humans)
 head(arid_c14)
 
 # All organic tissue rows for coastal humans
-arid_filter(tables = "humans", ecozone = "Coast") |>
-  subset(tissue_type == "organic")
+arid_filter(tables = "humans", ecozone = "Coast", tissue_type = "organic")
 
 # Assign chronology and filter samples with direct C14 dates
 df <- arid_chronology(arid_merge("humans"))
-subset(df, date_source == "C14")
+df[df$date_source == "C14", ]
 ```
 
 ## Citation
@@ -183,10 +177,10 @@ If you use ARID in a publication, please cite it as:
 
 ARID compiles data from peer-reviewed publications. Each record includes a short citation (`reference_short`) and a DOI (`doi`) linking to the original source.
 
-**Current sources:**
-- SAAID (Stable Isotope Archaeology and Anthropology Database) — human, animal, and plant isotopic data
-- Mendez-Quiros et al. (2023) — radiocarbon dates from archaeological contexts in northern Chile
-- Wande et al. (2026) *Front. Environ. Archaeol.* — human δ¹³C and δ¹⁵N from Mocha 2, Tarapacá (Late Intermediate period)
+```r
+# List all sources cited in the package
+unique(arid_merge()$reference_short)
+```
 
 ## Contributing
 
