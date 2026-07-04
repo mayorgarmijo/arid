@@ -15,11 +15,11 @@ ARID includes five datasets:
 
 | Dataset | Description | Rows |
 |---|---|---|
-| `arid_humans` | Isotopic data from human skeletal and soft tissue samples (long format) | 2,606 |
-| `arid_animals` | Isotopic data from faunal remains (long format) | 424 |
-| `arid_plants` | Isotopic data from botanical remains | 576 |
-| `arid_sites` | Geographic and chronological context for 422 archaeological sites | 422 |
-| `arid_c14` | Radiocarbon dates from archaeological contexts in northern Chile | 1,127 |
+| `arid_humans` | Isotopic data from human skeletal and soft tissue samples (long format) | 3,298 |
+| `arid_animals` | Isotopic data from faunal remains (long format) | 602 |
+| `arid_plants` | Isotopic data from botanical remains | 1,028 |
+| `arid_sites` | Geographic and chronological context for 437 archaeological sites | 437 |
+| `arid_c14` | Radiocarbon dates from archaeological contexts in northern Chile | 1,202 |
 
 ### Long format (humans and animals)
 
@@ -60,7 +60,7 @@ All date values in ARID use the **BCE/CE** system (negative = BCE, positive = CE
 
 ## Geographic coverage
 
-ARID currently includes samples from 422 archaeological sites across three administrative regions of northern Chile.
+ARID currently includes samples from 437 archaeological sites across three administrative regions of northern Chile.
 
 ![](man/figures/map_overview.png)
 
