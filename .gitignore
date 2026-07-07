@@ -7,3 +7,6 @@
 .DS_Store
 .quarto
 data-raw/saaid_v_2_0_2023-2.xlsx
+
+# Local-only material (personal, no se sube ni se clona)
+DMA/
