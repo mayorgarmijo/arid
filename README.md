@@ -171,7 +171,7 @@ df[df$date_source == "C14", ]
 
 If you use ARID in a publication, please cite it as:
 
-> Mayorga, D. (*year*). ARID: Atacama Repository of Isotopic Data. R package. https://github.com/mayorgarmijo/arid
+> Mayorga, D. (2026). ARID: Atacama Repository of Isotopic Data. R package. https://github.com/mayorgarmijo/arid
 
 ## Data sources
 
