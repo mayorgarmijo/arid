@@ -36,8 +36,8 @@
 #'   \item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
 #'   \item{doi}{DOI of the original publication / DOI de la publicación original}
 #'   \item{locality}{Site locality (e.g. Lower Azapa Valley) / Localidad del sitio}
-#'   \item{admin_region}{Administrative region: Arica y Parinacota, Tarapaca, or Antofagasta (Chile); Tacna or Moquegua (Peru) / Región administrativa}
-#'   \item{ecozone}{Ecological zone based on altitude: Coast (<130 masl), Lowlands (130-1700 masl), Precordillera (1700-3700 masl), or Altiplano (>3700 masl) / Zona ecológica}
+#'   \item{admin_region}{Administrative region: Moquegua or Tacna (Peru); Arica y Parinacota, Tarapaca, or Antofagasta (Chile). Ordered factor, north to south / Región administrativa; factor ordenado de norte a sur}
+#'   \item{ecozone}{Ecological zone based on altitude: Coast (<130 masl), Lowlands (130-1700 masl), Precordillera (1700-3700 masl), or Altiplano (>3700 masl). Ordered factor, west to east / Zona ecológica; factor ordenado de oeste a este}
 #'   \item{has_c14}{Whether a direct radiocarbon date exists in `arid_c14` for this sample / Si existe un fechado radiocarbónico en `arid_c14` para esta muestra}
 #'   \item{tissue}{Tissue type analysed (e.g. Bone collagen, Hair keratin, Bone apatite) / Tejido analizado}
 #'   \item{element}{Skeletal or anatomical element sampled / Elemento esquelético o anatómico muestreado}
