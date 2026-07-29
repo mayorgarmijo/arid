@@ -1,3 +1,17 @@
+# ARID (development)
+
+## New data / Nuevos datos
+
+- Added human isotopic samples from the south coast of Peru (Tacna and
+  Moquegua regions), integrated into `arid_humans`. `arid_humans` gains a
+  `country` column (`"Chile"` or `"Peru"`).
+- `arid_filter()` gains a `country` argument.
+- New `period` values from the Peru data: `Middle Horizon`,
+  `Middle Horizon (Tumilaca phase)`, `Late Intermediate (Estuquina phase)`,
+  `Republican`. The Peruvian "Early Intermediate Period" is treated as
+  equivalent to `Formative` and recorded as such.
+- `arid_humans`: 4,377 rows (3,298 Chile + 1,079 Peru).
+
 # ARID 0.1.0 (development)
 
 ## Breaking changes / Cambios importantes

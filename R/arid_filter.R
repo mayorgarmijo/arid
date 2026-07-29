@@ -13,10 +13,14 @@
 #'
 #' @param tables Character vector. One or more of `"humans"`, `"animals"`,
 #'   `"plants"`. Defaults to all three.
+#' @param country Character vector. One or more countries to keep:
+#'   `"Chile"`, `"Peru"`. Currently only populated in `arid_humans`; ignored
+#'   for tables without a `country` column.
 #' @param ecozone Character vector. One or more ecozones to keep:
 #'   `"Coast"`, `"Lowlands"`, `"Precordillera"`, `"Altiplano"`.
 #' @param admin_region Character vector. One or more administrative regions:
-#'   `"Arica y Parinacota"`, `"Tarapaca"`, `"Antofagasta"`.
+#'   `"Arica y Parinacota"`, `"Tarapaca"`, `"Antofagasta"` (Chile);
+#'   `"Tacna"`, `"Moquegua"` (Peru).
 #' @param period Character vector. One or more sub-periods
 #'   (e.g. `"Early Archaic"`, `"Late Formative"`).
 #' @param period_broad Character vector. One or more broad period categories
@@ -39,6 +43,9 @@
 #' # Multiple ecozones and an administrative region
 #' arid_filter(ecozone = c("Coast", "Lowlands"), admin_region = "Antofagasta")
 #'
+#' # Humans from Peru
+#' arid_filter(tables = "humans", country = "Peru")
+#'
 #' # Broad period filter
 #' arid_filter(period_broad = "Formative")
 #'
@@ -50,6 +57,7 @@
 #'
 #' @export
 arid_filter <- function(tables       = c("humans", "animals", "plants"),
+                        country      = NULL,
                         ecozone      = NULL,
                         admin_region = NULL,
                         period       = NULL,
@@ -57,14 +65,15 @@ arid_filter <- function(tables       = c("humans", "animals", "plants"),
                         locality     = NULL,
                         tissue_type  = NULL) {
 
-  if (is.null(ecozone) && is.null(admin_region) && is.null(period) &&
+  if (is.null(country) && is.null(ecozone) && is.null(admin_region) && is.null(period) &&
       is.null(period_broad) && is.null(locality) && is.null(tissue_type)) {
-    stop("At least one filter must be provided: ecozone, admin_region, period, period_broad, locality, or tissue_type.")
+    stop("At least one filter must be provided: country, ecozone, admin_region, period, period_broad, locality, or tissue_type.")
   }
 
   result <- arid_merge(tables = tables)
 
   # Capturar valores antes del filter para evitar ambigüedad con nombres de columna
+  co  <- country
   ez  <- ecozone
   ar  <- admin_region
   per <- period
@@ -72,6 +81,7 @@ arid_filter <- function(tables       = c("humans", "animals", "plants"),
   loc <- locality
   tt  <- tissue_type
 
+  if (!is.null(co))  result <- dplyr::filter(result, .data$country      %in% co)
   if (!is.null(ez))  result <- dplyr::filter(result, .data$ecozone      %in% ez)
   if (!is.null(ar))  result <- dplyr::filter(result, .data$admin_region %in% ar)
   if (!is.null(per)) result <- dplyr::filter(result, .data$period       %in% per)

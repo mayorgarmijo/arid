@@ -6,6 +6,7 @@
 \usage{
 arid_filter(
   tables = c("humans", "animals", "plants"),
+  country = NULL,
   ecozone = NULL,
   admin_region = NULL,
   period = NULL,
@@ -18,11 +19,16 @@ arid_filter(
 \item{tables}{Character vector. One or more of \code{"humans"}, \code{"animals"},
 \code{"plants"}. Defaults to all three.}
 
+\item{country}{Character vector. One or more countries to keep:
+\code{"Chile"}, \code{"Peru"}. Currently only populated in \code{arid_humans}; ignored
+for tables without a \code{country} column.}
+
 \item{ecozone}{Character vector. One or more ecozones to keep:
 \code{"Coast"}, \code{"Lowlands"}, \code{"Precordillera"}, \code{"Altiplano"}.}
 
 \item{admin_region}{Character vector. One or more administrative regions:
-\code{"Arica y Parinacota"}, \code{"Tarapaca"}, \code{"Antofagasta"}.}
+\code{"Arica y Parinacota"}, \code{"Tarapaca"}, \code{"Antofagasta"} (Chile);
+\code{"Tacna"}, \code{"Moquegua"} (Peru).}
 
 \item{period}{Character vector. One or more sub-periods
 (e.g. \code{"Early Archaic"}, \code{"Late Formative"}).}
@@ -57,6 +63,9 @@ arid_filter(tables = "humans", ecozone = "Altiplano")
 
 # Multiple ecozones and an administrative region
 arid_filter(ecozone = c("Coast", "Lowlands"), admin_region = "Antofagasta")
+
+# Humans from Peru
+arid_filter(tables = "humans", country = "Peru")
 
 # Broad period filter
 arid_filter(period_broad = "Formative")

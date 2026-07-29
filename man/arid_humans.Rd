@@ -5,8 +5,9 @@
 \alias{arid_humans}
 \title{Human isotopic data from the Atacama Desert}
 \format{
-A data frame with 2,606 rows and 37 columns:
+A data frame with 4,377 rows and 38 columns:
 \describe{
+\item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
 \item{period}{Sub-period or phase (e.g. Early Archaic, Late Formative) / Subperíodo o fase}
@@ -25,7 +26,7 @@ A data frame with 2,606 rows and 37 columns:
 \item{reference_short}{Short bibliographic citation / Referencia bibliográfica abreviada}
 \item{doi}{DOI of the original publication / DOI de la publicación original}
 \item{locality}{Site locality (e.g. Lower Azapa Valley) / Localidad del sitio}
-\item{admin_region}{Administrative region (Arica y Parinacota, Tarapaca, or Antofagasta) / Región administrativa}
+\item{admin_region}{Administrative region: Arica y Parinacota, Tarapaca, or Antofagasta (Chile); Tacna or Moquegua (Peru) / Región administrativa}
 \item{ecozone}{Ecological zone based on altitude: Coast (<130 masl), Lowlands (130-1700 masl), Precordillera (1700-3700 masl), or Altiplano (>3700 masl) / Zona ecológica}
 \item{has_c14}{Whether a direct radiocarbon date exists in \code{arid_c14} for this sample / Si existe un fechado radiocarbónico en \code{arid_c14} para esta muestra}
 \item{tissue}{Tissue type analysed (e.g. Bone collagen, Hair keratin, Bone apatite) / Tejido analizado}
@@ -55,15 +56,17 @@ arid_humans
 \description{
 Stable isotope measurements from human skeletal and soft tissue samples
 recovered at archaeological sites in northern Chile (Arica y Parinacota,
-Tarapaca, and Antofagasta regions). Stored in long format: one row per
-tissue analysed. Individuals with both organic and carbonate measurements
-appear in two rows distinguished by the \code{tissue_type} column.
-Radiocarbon dates are stored separately in \code{arid_c14} (linked via \code{lab_id}).
+Tarapaca, and Antofagasta regions) and the south coast of Peru (Tacna and
+Moquegua regions). Stored in long format: one row per tissue analysed.
+Individuals with both organic and carbonate measurements appear in two rows
+distinguished by the \code{tissue_type} column. Radiocarbon dates are stored
+separately in \code{arid_c14} (linked via \code{lab_id}; Chile only for now).
 
 Mediciones de isotópos estables de muestras de tejido esquelético y blando
-humano de sitios arqueológicos del norte de Chile. Formato largo: una fila
-por tejido analizado. Los fechados radiocarbónicos se almacenan en \code{arid_c14}
-(vinculados mediante \code{lab_id}).
+humano de sitios arqueológicos del norte de Chile y de la costa sur de Perú
+(Tacna y Moquegua). Formato largo: una fila por tejido analizado. Los
+fechados radiocarbónicos se almacenan en \code{arid_c14} (vinculados mediante
+\code{lab_id}; por ahora solo para Chile).
 }
 \seealso{
 \link{arid_c14} for radiocarbon dates; \code{\link[=arid_chronology]{arid_chronology()}} to assign dates.
