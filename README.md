@@ -2,6 +2,12 @@
 
 ARID is an open, collaborative repository of isotopic data for the Atacama Desert of northern Chile, covering the regions of Arica y Parinacota, Tarapaca, and Antofagasta. It compiles published isotopic measurements from human, animal, and plant samples into a set of clean, analysis-ready datasets accessible directly from R.
 
+## Citation
+
+If you use ARID in a publication, please cite it as:
+
+> Mayorga, D. (2026). ARID: Atacama Repository of Isotopic Data. R package. https://github.com/mayorgarmijo/arid
+
 ## Installation
 
 ```r
@@ -166,12 +172,6 @@ arid_filter(tables = "humans", ecozone = "Coast", tissue_type = "organic")
 df <- arid_chronology(arid_merge("humans"))
 df[df$date_source == "C14", ]
 ```
-
-## Citation
-
-If you use ARID in a publication, please cite it as:
-
-> Mayorga, D. (2026). ARID: Atacama Repository of Isotopic Data. R package. https://github.com/mayorgarmijo/arid
 
 ## Data sources
 
