@@ -10,7 +10,8 @@
   `Middle Horizon (Tumilaca phase)`, `Late Intermediate (Estuquina phase)`,
   `Republican`. The Peruvian "Early Intermediate Period" is treated as
   equivalent to `Formative` and recorded as such.
-- `arid_humans`: 4,377 rows (3,298 Chile + 1,079 Peru).
+- `arid_humans`: 4,392 rows (3,298 Chile + 1,094 Peru: 1,079 Moquegua +
+  15 Tacna).
 
 # ARID 0.1.0 (development)
 

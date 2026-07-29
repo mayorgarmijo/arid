@@ -15,7 +15,7 @@
 #' fechados radiocarbónicos se almacenan en `arid_c14` (vinculados mediante
 #' `lab_id`; por ahora solo para Chile).
 #'
-#' @format A data frame with 4,377 rows and 38 columns:
+#' @format A data frame with 4,392 rows and 38 columns:
 #' \describe{
 #'   \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
