@@ -5,7 +5,7 @@
 \alias{arid_plants}
 \title{Plant isotopic data from the Atacama Desert}
 \format{
-A data frame with 576 rows and 29 columns:
+A data frame with 1,028 rows and 29 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}

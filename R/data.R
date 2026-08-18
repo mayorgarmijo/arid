@@ -15,16 +15,33 @@
 #' fechados radiocarbónicos se almacenan en `arid_c14` (vinculados mediante
 #' `lab_id`; por ahora solo para Chile).
 #'
+#' Some individuals (same `sample_id`) were independently reported by more
+#' than one publication — either a genuine re-measurement by a different lab,
+#' or a later paper adding contextual metadata without new isotope values.
+#' Both rows are kept as-is (no row is dropped or merged) so no original
+#' measurement is lost; deduplicate by `sample_id` (choosing which
+#' `reference_short` to keep per case) before computing sample-size or
+#' population-level statistics, or double-counting of individuals may result.
+#'
+#' Algunos individuos (mismo `sample_id`) fueron reportados de forma
+#' independiente por más de una publicación — ya sea una remedición genuina
+#' por otro laboratorio, o un estudio posterior que agrega metadata contextual
+#' sin nuevos valores isotópicos. Ambas filas se conservan tal cual (no se
+#' elimina ni fusiona ninguna) para no perder ninguna medición original;
+#' deduplicar por `sample_id` (eligiendo qué `reference_short` conservar caso
+#' a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
+#' se puede producir doble conteo de individuos.
+#'
 #' @format A data frame with 4,392 rows and 38 columns:
 #' \describe{
 #'   \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 #'   \item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
 #'   \item{period}{Sub-period or phase (e.g. Early Archaic, Late Formative) / Subperíodo o fase}
-#'   \item{lab_id}{Laboratory identifier linking to `arid_c14` for radiocarbon dates / Identificador de laboratorio (vínculo con `arid_c14`)}
+#'   \item{lab_id}{Isotopic sample laboratory code. Only expected to match `arid_c14` when `has_c14` is `TRUE`; otherwise it is a general lab code unrelated to radiocarbon dating / Código de laboratorio de la muestra isotópica. Solo se espera coincidencia con `arid_c14` cuando `has_c14` es `TRUE`; en los demás casos es un código de laboratorio general, sin relación con fechado radiocarbónico}
 #'   \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período cultural (a.C./d.C.; negativo = a.C.)}
 #'   \item{period_to}{End of cultural period (BCE/CE) / Fin del período cultural (a.C./d.C.)}
-#'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
+#'   \item{sample_id}{Individual identifier — not a unique row/sample identifier. The same individual can span multiple rows (sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel); count distinct `sample_id` values, not rows, when reporting sample size / Identificador del individuo — no es un identificador único por fila/muestra. Un mismo individuo puede abarcar varias filas (segmentos secuenciales de tejido como incrementos de pelo, más distintos tejidos/elementos como colágeno óseo, apatito óseo o esmalte dental); al reportar el tamaño muestral, contar valores distintos de `sample_id`, no filas}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 #'   \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 #'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
@@ -74,7 +91,7 @@
 #' del norte de Chile. Formato largo: una fila por tejido analizado. Los fechados
 #' radiocarbónicos se almacenan en `arid_c14`.
 #'
-#' @format A data frame with 424 rows and 33 columns:
+#' @format A data frame with 602 rows and 33 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 #'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
@@ -85,7 +102,7 @@
 #'   \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período (a.C./d.C.)}
 #'   \item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
 #'   \item{lab_id}{Laboratory identifier linking to `arid_c14` / Identificador de laboratorio}
-#'   \item{type_source}{Wild or domestic / Silvestre o doméstico}
+#'   \item{type_source}{Habitat/origin category of the taxon: "Marine fauna" or "Terrestrial fauna". Not a wild/domestic distinction (not recorded); can be approximated only for camelids via `taxon_local`, on sparse data / Categoría de hábitat/origen del taxón: "Marine fauna" o "Terrestrial fauna". No es una distinción silvestre/doméstico (no está registrada); solo aproximable para camélidos vía `taxon_local`, con datos dispersos}
 #'   \item{taxon_local}{Local common name of the taxon / Nombre local del taxón}
 #'   \item{genus_species}{Scientific name (genus and species) / Nombre científico}
 #'   \item{sample_type}{Physical sample type (Bone, Fur, Feather, etc.) / Tipo de muestra física}
@@ -126,7 +143,7 @@
 #' Mediciones de isótopos estables de restos botánicos de sitios arqueológicos
 #' del norte de Chile. Los fechados radiocarbónicos se almacenan en `arid_c14`.
 #'
-#' @format A data frame with 576 rows and 29 columns:
+#' @format A data frame with 1,028 rows and 29 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 #'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
@@ -176,7 +193,7 @@
 #' incluidos en ARID, incluyendo sitios de las tablas de muestras isotópicas y
 #' de bases de datos radiocarbónicas.
 #'
-#' @format A data frame with 422 rows and 11 columns:
+#' @format A data frame with 469 rows and 11 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier (primary key) / Identificador del sitio (clave primaria)}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
@@ -210,7 +227,7 @@
 #' unir mediante `lab_id`. La columna `d13C_ams` contiene valores de delta-13C
 #' para corrección de fraccionamiento AMS, no para análisis dietético.
 #'
-#' @format A data frame with 1,127 rows and 17 columns:
+#' @format A data frame with 1,202 rows and 17 columns:
 #' \describe{
 #'   \item{lab_id}{Laboratory identifier of the isotopic sample (NA for context-level dates) / Identificador del laboratorio isotópico (NA para fechados de contexto)}
 #'   \item{sample_id}{Sample identifier of the isotopic sample (NA for context-level dates) / Identificador de la muestra isotópica}

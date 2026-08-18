@@ -5,7 +5,7 @@
 \alias{arid_c14}
 \title{Radiocarbon dates from the Atacama Desert}
 \format{
-A data frame with 1,127 rows and 17 columns:
+A data frame with 1,202 rows and 17 columns:
 \describe{
 \item{lab_id}{Laboratory identifier of the isotopic sample (NA for context-level dates) / Identificador del laboratorio isotópico (NA para fechados de contexto)}
 \item{sample_id}{Sample identifier of the isotopic sample (NA for context-level dates) / Identificador de la muestra isotópica}

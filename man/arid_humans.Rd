@@ -11,10 +11,10 @@ A data frame with 4,392 rows and 38 columns:
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{period_broad}{Broad period category (e.g. Archaic, Formative, Late Intermediate, Late) / Período general}
 \item{period}{Sub-period or phase (e.g. Early Archaic, Late Formative) / Subperíodo o fase}
-\item{lab_id}{Laboratory identifier linking to \code{arid_c14} for radiocarbon dates / Identificador de laboratorio (vínculo con \code{arid_c14})}
+\item{lab_id}{Isotopic sample laboratory code. Only expected to match \code{arid_c14} when \code{has_c14} is \code{TRUE}; otherwise it is a general lab code unrelated to radiocarbon dating / Código de laboratorio de la muestra isotópica. Solo se espera coincidencia con \code{arid_c14} cuando \code{has_c14} es \code{TRUE}; en los demás casos es un código de laboratorio general, sin relación con fechado radiocarbónico}
 \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período cultural (a.C./d.C.; negativo = a.C.)}
 \item{period_to}{End of cultural period (BCE/CE) / Fin del período cultural (a.C./d.C.)}
-\item{sample_id}{Unique sample identifier / Identificador único de muestra}
+\item{sample_id}{Individual identifier — not a unique row/sample identifier. The same individual can span multiple rows (sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel); count distinct \code{sample_id} values, not rows, when reporting sample size / Identificador del individuo — no es un identificador único por fila/muestra. Un mismo individuo puede abarcar varias filas (segmentos secuenciales de tejido como incrementos de pelo, más distintos tejidos/elementos como colágeno óseo, apatito óseo o esmalte dental); al reportar el tamaño muestral, contar valores distintos de \code{sample_id}, no filas}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
@@ -67,6 +67,23 @@ humano de sitios arqueológicos del norte de Chile y de la costa sur de Perú
 (Tacna y Moquegua). Formato largo: una fila por tejido analizado. Los
 fechados radiocarbónicos se almacenan en \code{arid_c14} (vinculados mediante
 \code{lab_id}; por ahora solo para Chile).
+
+Some individuals (same \code{sample_id}) were independently reported by more
+than one publication — either a genuine re-measurement by a different lab,
+or a later paper adding contextual metadata without new isotope values.
+Both rows are kept as-is (no row is dropped or merged) so no original
+measurement is lost; deduplicate by \code{sample_id} (choosing which
+\code{reference_short} to keep per case) before computing sample-size or
+population-level statistics, or double-counting of individuals may result.
+
+Algunos individuos (mismo \code{sample_id}) fueron reportados de forma
+independiente por más de una publicación — ya sea una remedición genuina
+por otro laboratorio, o un estudio posterior que agrega metadata contextual
+sin nuevos valores isotópicos. Ambas filas se conservan tal cual (no se
+elimina ni fusiona ninguna) para no perder ninguna medición original;
+deduplicar por \code{sample_id} (eligiendo qué \code{reference_short} conservar caso
+a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
+se puede producir doble conteo de individuos.
 }
 \seealso{
 \link{arid_c14} for radiocarbon dates; \code{\link[=arid_chronology]{arid_chronology()}} to assign dates.

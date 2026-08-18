@@ -5,7 +5,7 @@
 \alias{arid_animals}
 \title{Faunal isotopic data from the Atacama Desert}
 \format{
-A data frame with 424 rows and 33 columns:
+A data frame with 602 rows and 33 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
 \item{sample_id}{Unique sample identifier / Identificador único de muestra}
@@ -16,7 +16,7 @@ A data frame with 424 rows and 33 columns:
 \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período (a.C./d.C.)}
 \item{period_to}{End of cultural period (BCE/CE) / Fin del período (a.C./d.C.)}
 \item{lab_id}{Laboratory identifier linking to \code{arid_c14} / Identificador de laboratorio}
-\item{type_source}{Wild or domestic / Silvestre o doméstico}
+\item{type_source}{Habitat/origin category of the taxon: "Marine fauna" or "Terrestrial fauna". Not a wild/domestic distinction (not recorded); can be approximated only for camelids via \code{taxon_local}, on sparse data / Categoría de hábitat/origen del taxón: "Marine fauna" o "Terrestrial fauna". No es una distinción silvestre/doméstico (no está registrada); solo aproximable para camélidos vía \code{taxon_local}, con datos dispersos}
 \item{taxon_local}{Local common name of the taxon / Nombre local del taxón}
 \item{genus_species}{Scientific name (genus and species) / Nombre científico}
 \item{sample_type}{Physical sample type (Bone, Fur, Feather, etc.) / Tipo de muestra física}

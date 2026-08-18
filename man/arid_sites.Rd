@@ -5,7 +5,7 @@
 \alias{arid_sites}
 \title{Archaeological site information for the Atacama Desert}
 \format{
-A data frame with 422 rows and 11 columns:
+A data frame with 469 rows and 11 columns:
 \describe{
 \item{site_name}{Archaeological site identifier (primary key) / Identificador del sitio (clave primaria)}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
