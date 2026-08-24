@@ -32,7 +32,7 @@
 #' a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
 #' se puede producir doble conteo de individuos.
 #'
-#' @format A data frame with 4,392 rows and 38 columns:
+#' @format A data frame with 4,364 rows and 38 columns:
 #' \describe{
 #'   \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
@@ -227,7 +227,7 @@
 #' unir mediante `lab_id`. La columna `d13C_ams` contiene valores de delta-13C
 #' para corrección de fraccionamiento AMS, no para análisis dietético.
 #'
-#' @format A data frame with 1,202 rows and 17 columns:
+#' @format A data frame with 1,210 rows and 17 columns:
 #' \describe{
 #'   \item{lab_id}{Laboratory identifier of the isotopic sample (NA for context-level dates) / Identificador del laboratorio isotópico (NA para fechados de contexto)}
 #'   \item{sample_id}{Sample identifier of the isotopic sample (NA for context-level dates) / Identificador de la muestra isotópica}

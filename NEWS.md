@@ -1,5 +1,25 @@
 # ARID (development)
 
+## Data completeness fixes / Correcciones de completitud de datos
+
+- Filled gaps found by re-checking primary source spreadsheets against
+  `arid_humans` for several already-integrated papers: Andrade et al. (2016),
+  De Souza et al. (2019), Knudson and Torres-Rouff (2014), Knudson et al.
+  (2015), McRostie (2014), Sandness (1992), Santana-Sagredo et al. (2019),
+  and Tomczak (2001) — missing individuals, missing 87Sr/86Sr values, and
+  incomplete `lab_id`/`sample_id` fields.
+- Removed 158 mechanically-generated empty `tissue_type == "organic"` rows
+  (a `to_long()` artifact from build_arid.py: an organic row was always
+  emitted even when a source record had only carbonate data).
+- Corrected 15 samples that were mis-attributed to Santana-Sagredo et al.
+  (2021) — that paper's Supp. Table 4 is a compilation of other studies; these
+  particular samples are primary to Santana-Sagredo et al. (2019) and are now
+  correctly attributed there instead of duplicated under both references.
+- `arid_c14` gains 8 radiocarbon dates recovered from the Andrade et al.
+  (2016) and De Souza et al. (2019) source tables.
+- `arid_humans`: 4,364 rows (net change after removing empty placeholder
+  rows and duplicate-attribution fixes, despite ~175 new rows added).
+
 ## New data / Nuevos datos
 
 - Added human isotopic samples from the south coast of Peru (Tacna and
