@@ -32,6 +32,24 @@
 #' a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
 #' se puede producir doble conteo de individuos.
 #'
+#' `CN_ratio` is a per-sample lab measurement for most rows, but for two
+#' sources it is a proxy value rather than an exact per-sample figure: for
+#' Ballester and Clarot (2014) (and its citation variants) the source gives
+#' only a reported range (2.9–3.6, cited as personal communication in
+#' Santana-Sagredo et al. 2021) and the midpoint (3.25) is used; for Tomczak
+#' (2001) the source reports C:N only as a per-site average (not per
+#' individual), and that site average is used for every organic sample from
+#' that site lacking its own value.
+#'
+#' `CN_ratio` es una medición de laboratorio por muestra en la mayoría de las
+#' filas, pero para dos fuentes es un valor aproximado: para Ballester and
+#' Clarot (2014) (y sus variantes de cita) la fuente solo da un rango
+#' reportado (2.9–3.6, citado como comunicación personal en Santana-Sagredo
+#' et al. 2021) y se usa el punto medio (3.25); para Tomczak (2001) la fuente
+#' reporta C:N solo como promedio por sitio (no por individuo), y se usa ese
+#' promedio para cada muestra orgánica de ese sitio que no tenga su propio
+#' valor.
+#'
 #' @format A data frame with 4,364 rows and 38 columns:
 #' \describe{
 #'   \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}

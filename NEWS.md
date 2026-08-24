@@ -1,5 +1,15 @@
 # ARID (development)
 
+## CN_ratio proxy values / Valores aproximados de CN_ratio
+
+- Filled `CN_ratio` for 260 organic rows that had no per-sample C:N in their
+  source, at the user's request, using proxy values instead of leaving them
+  blank: Ballester and Clarot (2014) and citation variants (14 rows) now use
+  3.25, the midpoint of the 2.9–3.6 range reported as personal communication
+  in Santana-Sagredo et al. (2021); Tomczak (2001) (243 rows) now uses the
+  per-site average C:N from that paper's "Preservation Values" table. See
+  `?arid_humans` for details — these are not individual lab measurements.
+
 ## Data completeness fixes / Correcciones de completitud de datos
 
 - Filled gaps found by re-checking primary source spreadsheets against
