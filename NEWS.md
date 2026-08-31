@@ -1,5 +1,16 @@
 # ARID (development)
 
+## Ecozone correction / Corrección de ecozona
+
+- Corrected `ecozone` from `"Altiplano"` to `"Precordillera"` for 630
+  `arid_humans` rows at San Pedro de Atacama oasis sites (Coyo Oriental,
+  Coyo 3, Solcor 3, Solcor Plaza, Solcor Nueva Poblacion, Quitor 1/5/6/8/9,
+  Tchecar, Catarpe 2/5, Larache, Casa Parroquial, Solor Villama, Yaye
+  Occidental/2/3/4), reported under Pestle et al. (2021) and Knudson and
+  Torres (2023) — these sites are all correctly Precordillera under every
+  other reference. `arid_sites` corrected to match for the 5 sites that had
+  no other reference to fall back on.
+
 ## CN_ratio proxy values / Valores aproximados de CN_ratio
 
 - Filled `CN_ratio` for 260 organic rows that had no per-sample C:N in their
