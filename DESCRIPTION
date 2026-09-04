@@ -1,6 +1,6 @@
 Package: ARID
 Title: Atacama Repository of Isotopic Data
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Authors@R:
     person("Diego", "Mayorga", , "mayorgarmijo@gmail.com", role = c("aut", "cre"))
 Description: An open, collaborative repository of isotopic data for the

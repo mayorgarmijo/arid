@@ -15,22 +15,30 @@
 #' fechados radiocarbónicos se almacenan en `arid_c14` (vinculados mediante
 #' `lab_id`; por ahora solo para Chile).
 #'
-#' Some individuals (same `sample_id`) were independently reported by more
-#' than one publication — either a genuine re-measurement by a different lab,
-#' or a later paper adding contextual metadata without new isotope values.
-#' Both rows are kept as-is (no row is dropped or merged) so no original
-#' measurement is lost; deduplicate by `sample_id` (choosing which
-#' `reference_short` to keep per case) before computing sample-size or
-#' population-level statistics, or double-counting of individuals may result.
+#' Count distinct individuals with `individual_id`, not `sample_id`.
+#' `sample_id` is only unique within a (`reference_short`, `site_name`) pair:
+#' different studies reuse the same numeric or tomb-code identifiers, and some
+#' rows (e.g. Tomczak 2001) carry no `sample_id` at all. `individual_id` is a
+#' stable integer that resolves these collisions and gives every unlabelled row
+#' its own identity. Some individuals were independently reported by more than
+#' one publication — a genuine re-measurement by a different lab, or a later
+#' paper adding contextual metadata without new isotope values; those rows are
+#' kept as-is (nothing dropped or merged) and share no `individual_id`, so pick
+#' which `reference_short` to keep per case before computing sample-size or
+#' population-level statistics.
 #'
-#' Algunos individuos (mismo `sample_id`) fueron reportados de forma
-#' independiente por más de una publicación — ya sea una remedición genuina
-#' por otro laboratorio, o un estudio posterior que agrega metadata contextual
-#' sin nuevos valores isotópicos. Ambas filas se conservan tal cual (no se
-#' elimina ni fusiona ninguna) para no perder ninguna medición original;
-#' deduplicar por `sample_id` (eligiendo qué `reference_short` conservar caso
-#' a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
-#' se puede producir doble conteo de individuos.
+#' Para contar individuos distintos usar `individual_id`, no `sample_id`.
+#' `sample_id` solo es único dentro de un par (`reference_short`, `site_name`):
+#' distintos estudios reutilizan los mismos identificadores numéricos o códigos
+#' de tumba, y algunas filas (p.ej. Tomczak 2001) no tienen `sample_id`.
+#' `individual_id` es un entero estable que resuelve esas colisiones y asigna
+#' identidad propia a cada fila sin etiquetar. Algunos individuos fueron
+#' reportados de forma independiente por más de una publicación — remedición
+#' genuina por otro laboratorio, o un estudio posterior que agrega metadata sin
+#' nuevos valores isotópicos; esas filas se conservan tal cual (no se elimina ni
+#' fusiona ninguna) y no comparten `individual_id`, así que elegir qué
+#' `reference_short` conservar caso a caso antes de calcular tamaño muestral o
+#' estadísticas poblacionales.
 #'
 #' `CN_ratio` is a per-sample lab measurement for most rows, but for two
 #' sources it is a proxy value rather than an exact per-sample figure: for
@@ -50,7 +58,7 @@
 #' promedio para cada muestra orgánica de ese sitio que no tenga su propio
 #' valor.
 #'
-#' @format A data frame with 4,364 rows and 38 columns:
+#' @format A data frame with 4,364 rows and 39 columns:
 #' \describe{
 #'   \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
@@ -59,7 +67,8 @@
 #'   \item{lab_id}{Isotopic sample laboratory code. Only expected to match `arid_c14` when `has_c14` is `TRUE`; otherwise it is a general lab code unrelated to radiocarbon dating / Código de laboratorio de la muestra isotópica. Solo se espera coincidencia con `arid_c14` cuando `has_c14` es `TRUE`; en los demás casos es un código de laboratorio general, sin relación con fechado radiocarbónico}
 #'   \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período cultural (a.C./d.C.; negativo = a.C.)}
 #'   \item{period_to}{End of cultural period (BCE/CE) / Fin del período cultural (a.C./d.C.)}
-#'   \item{sample_id}{Individual identifier — not a unique row/sample identifier. The same individual can span multiple rows (sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel); count distinct `sample_id` values, not rows, when reporting sample size / Identificador del individuo — no es un identificador único por fila/muestra. Un mismo individuo puede abarcar varias filas (segmentos secuenciales de tejido como incrementos de pelo, más distintos tejidos/elementos como colágeno óseo, apatito óseo o esmalte dental); al reportar el tamaño muestral, contar valores distintos de `sample_id`, no filas}
+#'   \item{sample_id}{Identifier as given by the source publication — unique only within a (`reference_short`, `site_name`) pair, not globally, and `NA` for some rows. Use `individual_id` to count individuals / Identificador tal como lo da la publicación original — único solo dentro de un par (`reference_short`, `site_name`), no globalmente, y `NA` en algunas filas. Usar `individual_id` para contar individuos}
+#'   \item{individual_id}{Stable integer identifying a distinct individual across the whole table. Rows sharing a non-`NA` `sample_id` within one (`reference_short`, `site_name`) pair — sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel — share one `individual_id`; each row with `sample_id` `NA` gets its own. Count distinct `individual_id`, not rows, when reporting sample size / Entero estable que identifica un individuo distinto en toda la tabla. Las filas que comparten un `sample_id` no-`NA` dentro de un par (`reference_short`, `site_name`) comparten un `individual_id`; cada fila con `sample_id` `NA` recibe uno propio. Al reportar el tamaño muestral, contar valores distintos de `individual_id`, no filas}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 #'   \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 #'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
@@ -109,10 +118,11 @@
 #' del norte de Chile. Formato largo: una fila por tejido analizado. Los fechados
 #' radiocarbónicos se almacenan en `arid_c14`.
 #'
-#' @format A data frame with 602 rows and 33 columns:
+#' @format A data frame with 602 rows and 34 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
-#'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
+#'   \item{sample_id}{Identifier as given by the source publication — unique only within a (`reference_short`, `site_name`) pair. Use `individual_id` to count specimens / Identificador tal como lo da la publicación original — único solo dentro de un par (`reference_short`, `site_name`). Usar `individual_id` para contar especímenes}
+#'   \item{individual_id}{Stable integer identifying a distinct specimen across the whole table; rows sharing a non-`NA` `sample_id` within one (`reference_short`, `site_name`) pair (e.g. organic and carbonate tissue) share one value / Entero estable que identifica un espécimen distinto en toda la tabla}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 #'   \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 #'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
@@ -161,10 +171,11 @@
 #' Mediciones de isótopos estables de restos botánicos de sitios arqueológicos
 #' del norte de Chile. Los fechados radiocarbónicos se almacenan en `arid_c14`.
 #'
-#' @format A data frame with 1,028 rows and 29 columns:
+#' @format A data frame with 1,028 rows and 33 columns:
 #' \describe{
 #'   \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
-#'   \item{sample_id}{Unique sample identifier / Identificador único de muestra}
+#'   \item{sample_id}{Identifier as given by the source publication — unique only within a (`reference_short`, `site_name`) pair, and `NA` for many rows. Use `individual_id` to count specimens / Identificador tal como lo da la publicación original — único solo dentro de un par (`reference_short`, `site_name`), y `NA` en muchas filas. Usar `individual_id` para contar especímenes}
+#'   \item{individual_id}{Stable integer identifying a distinct specimen across the whole table; rows sharing a non-`NA` `sample_id` within one (`reference_short`, `site_name`) pair share one value, each `NA`-`sample_id` row gets its own / Entero estable que identifica un espécimen distinto en toda la tabla}
 #'   \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 #'   \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 #'   \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}

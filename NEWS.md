@@ -1,5 +1,27 @@
 # ARID (development)
 
+## New `individual_id` column / Nueva columna `individual_id`
+
+- Added `individual_id` to `arid_humans`, `arid_animals`, and `arid_plants`: a
+  stable integer identifying a distinct individual/specimen across the whole
+  table. `sample_id` is only unique within a (`reference_short`, `site_name`)
+  pair — different studies reuse the same numeric and tomb-code identifiers
+  (e.g. `"T11"`, `"1942"`), some rows carry no `sample_id` (Tomczak 2001), and
+  in a few sources `sample_id` is a category label rather than an identifier
+  (Diaz et al. 2016). Rows sharing a non-`NA` `sample_id` and coordinates
+  within one (`reference_short`, `site_name`) pair — multiple tissues, hair
+  increments — share one `individual_id`. Distinct-`individual_id` counts:
+  humans 2377 (vs 2247 distinct `sample_id`), animals 446, plants 700. Use
+  `individual_id`, not `sample_id`, for sample-size and population statistics.
+- The data-raw build now asserts no `individual_id` spans multiple
+  `reference_short`, `site_name`, `admin_region`, or `ecozone` values.
+
+- Se agregó `individual_id` a `arid_humans`, `arid_animals` y `arid_plants`:
+  un entero estable que identifica un individuo/espécimen distinto en toda la
+  tabla, ya que `sample_id` solo es único dentro de un par
+  (`reference_short`, `site_name`). Usar `individual_id` para tamaño muestral
+  y estadísticas poblacionales.
+
 ## Ecozone correction / Corrección de ecozona
 
 - Corrected `ecozone` from `"Altiplano"` to `"Precordillera"` for 630

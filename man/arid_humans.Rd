@@ -5,7 +5,7 @@
 \alias{arid_humans}
 \title{Human isotopic data from the Atacama Desert}
 \format{
-A data frame with 4,364 rows and 38 columns:
+A data frame with 4,364 rows and 39 columns:
 \describe{
 \item{country}{Country of the sample: "Chile" or "Peru" / País de la muestra}
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
@@ -14,7 +14,8 @@ A data frame with 4,364 rows and 38 columns:
 \item{lab_id}{Isotopic sample laboratory code. Only expected to match \code{arid_c14} when \code{has_c14} is \code{TRUE}; otherwise it is a general lab code unrelated to radiocarbon dating / Código de laboratorio de la muestra isotópica. Solo se espera coincidencia con \code{arid_c14} cuando \code{has_c14} es \code{TRUE}; en los demás casos es un código de laboratorio general, sin relación con fechado radiocarbónico}
 \item{period_from}{Start of cultural period (BCE/CE; negative = BCE) / Inicio del período cultural (a.C./d.C.; negativo = a.C.)}
 \item{period_to}{End of cultural period (BCE/CE) / Fin del período cultural (a.C./d.C.)}
-\item{sample_id}{Individual identifier — not a unique row/sample identifier. The same individual can span multiple rows (sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel); count distinct \code{sample_id} values, not rows, when reporting sample size / Identificador del individuo — no es un identificador único por fila/muestra. Un mismo individuo puede abarcar varias filas (segmentos secuenciales de tejido como incrementos de pelo, más distintos tejidos/elementos como colágeno óseo, apatito óseo o esmalte dental); al reportar el tamaño muestral, contar valores distintos de \code{sample_id}, no filas}
+\item{sample_id}{Identifier as given by the source publication — unique only within a (\code{reference_short}, \code{site_name}) pair, not globally, and \code{NA} for some rows. Use \code{individual_id} to count individuals / Identificador tal como lo da la publicación original — único solo dentro de un par (\code{reference_short}, \code{site_name}), no globalmente, y \code{NA} en algunas filas. Usar \code{individual_id} para contar individuos}
+\item{individual_id}{Stable integer identifying a distinct individual across the whole table. Rows sharing a non-\code{NA} \code{sample_id} within one (\code{reference_short}, \code{site_name}) pair — sequential tissue segments such as hair increments, plus different tissues/elements such as bone collagen, bone apatite, or tooth enamel — share one \code{individual_id}; each row with \code{sample_id} \code{NA} gets its own. Count distinct \code{individual_id}, not rows, when reporting sample size / Entero estable que identifica un individuo distinto en toda la tabla. Las filas que comparten un \code{sample_id} no-\code{NA} dentro de un par (\code{reference_short}, \code{site_name}) comparten un \code{individual_id}; cada fila con \code{sample_id} \code{NA} recibe uno propio. Al reportar el tamaño muestral, contar valores distintos de \code{individual_id}, no filas}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
@@ -68,22 +69,30 @@ humano de sitios arqueológicos del norte de Chile y de la costa sur de Perú
 fechados radiocarbónicos se almacenan en \code{arid_c14} (vinculados mediante
 \code{lab_id}; por ahora solo para Chile).
 
-Some individuals (same \code{sample_id}) were independently reported by more
-than one publication — either a genuine re-measurement by a different lab,
-or a later paper adding contextual metadata without new isotope values.
-Both rows are kept as-is (no row is dropped or merged) so no original
-measurement is lost; deduplicate by \code{sample_id} (choosing which
-\code{reference_short} to keep per case) before computing sample-size or
-population-level statistics, or double-counting of individuals may result.
+Count distinct individuals with \code{individual_id}, not \code{sample_id}.
+\code{sample_id} is only unique within a (\code{reference_short}, \code{site_name}) pair:
+different studies reuse the same numeric or tomb-code identifiers, and some
+rows (e.g. Tomczak 2001) carry no \code{sample_id} at all. \code{individual_id} is a
+stable integer that resolves these collisions and gives every unlabelled row
+its own identity. Some individuals were independently reported by more than
+one publication — a genuine re-measurement by a different lab, or a later
+paper adding contextual metadata without new isotope values; those rows are
+kept as-is (nothing dropped or merged) and share no \code{individual_id}, so pick
+which \code{reference_short} to keep per case before computing sample-size or
+population-level statistics.
 
-Algunos individuos (mismo \code{sample_id}) fueron reportados de forma
-independiente por más de una publicación — ya sea una remedición genuina
-por otro laboratorio, o un estudio posterior que agrega metadata contextual
-sin nuevos valores isotópicos. Ambas filas se conservan tal cual (no se
-elimina ni fusiona ninguna) para no perder ninguna medición original;
-deduplicar por \code{sample_id} (eligiendo qué \code{reference_short} conservar caso
-a caso) antes de calcular tamaño muestral o estadísticas poblacionales, o
-se puede producir doble conteo de individuos.
+Para contar individuos distintos usar \code{individual_id}, no \code{sample_id}.
+\code{sample_id} solo es único dentro de un par (\code{reference_short}, \code{site_name}):
+distintos estudios reutilizan los mismos identificadores numéricos o códigos
+de tumba, y algunas filas (p.ej. Tomczak 2001) no tienen \code{sample_id}.
+\code{individual_id} es un entero estable que resuelve esas colisiones y asigna
+identidad propia a cada fila sin etiquetar. Algunos individuos fueron
+reportados de forma independiente por más de una publicación — remedición
+genuina por otro laboratorio, o un estudio posterior que agrega metadata sin
+nuevos valores isotópicos; esas filas se conservan tal cual (no se elimina ni
+fusiona ninguna) y no comparten \code{individual_id}, así que elegir qué
+\code{reference_short} conservar caso a caso antes de calcular tamaño muestral o
+estadísticas poblacionales.
 
 \code{CN_ratio} is a per-sample lab measurement for most rows, but for two
 sources it is a proxy value rather than an exact per-sample figure: for

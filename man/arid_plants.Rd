@@ -5,10 +5,11 @@
 \alias{arid_plants}
 \title{Plant isotopic data from the Atacama Desert}
 \format{
-A data frame with 1,028 rows and 29 columns:
+A data frame with 1,028 rows and 33 columns:
 \describe{
 \item{site_name}{Archaeological site identifier / Identificador del sitio arqueológico}
-\item{sample_id}{Unique sample identifier / Identificador único de muestra}
+\item{sample_id}{Identifier as given by the source publication — unique only within a (\code{reference_short}, \code{site_name}) pair, and \code{NA} for many rows. Use \code{individual_id} to count specimens / Identificador tal como lo da la publicación original — único solo dentro de un par (\code{reference_short}, \code{site_name}), y \code{NA} en muchas filas. Usar \code{individual_id} para contar especímenes}
+\item{individual_id}{Stable integer identifying a distinct specimen across the whole table; rows sharing a non-\code{NA} \code{sample_id} within one (\code{reference_short}, \code{site_name}) pair share one value, each \code{NA}-\code{sample_id} row gets its own / Entero estable que identifica un espécimen distinto en toda la tabla}
 \item{lat}{Latitude in decimal degrees / Latitud en grados decimales}
 \item{lon}{Longitude in decimal degrees / Longitud en grados decimales}
 \item{altitude_masl}{Altitude in metres above sea level / Altitud en metros sobre el nivel del mar}
